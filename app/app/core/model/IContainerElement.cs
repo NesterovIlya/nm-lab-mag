@@ -8,7 +8,7 @@ namespace app.core.model
 {
     interface IContainerElement
     {
-        void transpose();
+        IContainerElement getTransposed();
         bool isNeutralElement();
         IContainerElement getNeutralElememt();
     }

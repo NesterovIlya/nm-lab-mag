@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace app.core.model.implementation
 {
@@ -26,13 +23,13 @@ namespace app.core.model.implementation
             }
         }
 
-        public SymmetricMatrix(int dimention, T neutralElement)
+        public SymmetricMatrix(int dimension, T neutralElement)
         {
-            _dimension = dimention;
-            _elements = new List<List<T>>(dimention);
+            _dimension = dimension;
+            _elements = new List<List<T>>(dimension);
             for (int i = 0; i < _dimension; i++)
             {
-                _elements[i] = new List<T>();
+                _elements.Add(new List<T>());
             }
             _neutralElement = neutralElement;
         }
@@ -49,11 +46,7 @@ namespace app.core.model.implementation
             if (_elements[row].Count > column)
             {
                 T value = _elements[row][column];
-                if (transpose)
-                {
-                    value.transpose();
-                }
-                return value;
+                return transpose ? (T) value.getTransposed() : value;
             }
             else
             {
@@ -70,23 +63,58 @@ namespace app.core.model.implementation
 
             if (row > column)
             {
-                value.transpose();
+                value = (T) value.getTransposed();
             }
 
             normalizeIndexes(ref row, ref column);
             if (_elements[row].Count <= column)
             {
-                for (int i = _elements[row].Count; i < column; i++)
+                if (!value.isNeutralElement())
                 {
-                    _elements[row].Add(_neutralElement);
+                    for (int i = _elements[row].Count; i < column; i++)
+                    {
+                        _elements[row].Add(_neutralElement);
+                    }
+                    _elements[row].Add(value);
+                    if (_elements[row].Count > _bandWidth)
+                        _bandWidth = _elements[row].Count;
                 }
-                _elements[row].Add(value);
-                if (_elements[row].Count > _bandWidth)
-                    _bandWidth = _elements[row].Count;
             }
             else
             {
                 _elements[row][column] = value;
+                if (value.isNeutralElement())
+                {
+                    normalizeRow(row);
+                    calculateBandWidth();
+                }
+            }
+        }
+
+        private void calculateBandWidth()
+        {
+            _bandWidth = 0;
+            foreach (List<T> row in _elements)
+            {
+                if (row.Count > _bandWidth)
+                {
+                    _bandWidth = row.Count;
+                }
+            }
+        }
+
+        private void normalizeRow(int row)
+        {
+            for (int i = _elements[row].Count - 1; i >= 0; i--)
+            {
+                if (_elements[row][i].isNeutralElement())
+                {
+                    _elements[row].RemoveAt(i);
+                }
+                else
+                {
+                    return;
+                }
             }
         }
 
@@ -99,7 +127,7 @@ namespace app.core.model.implementation
                 j = temp;
             }
 
-            j = j - i + 1;
+            j = j - i;
         }
 
         public bool isNeutralElement()
@@ -114,16 +142,17 @@ namespace app.core.model.implementation
             return true;
         }
 
-        public void transpose() { }
+        public IContainerElement getTransposed() { return this; }
 
         public IContainerElement getNeutralElememt()
         {
-            return _neutralElement;
+            return new SymmetricMatrix<T>(_dimension, _neutralElement);
         }
 
         public int getBandWidth()
         {
             return _bandWidth;
         }
+
     }
 }

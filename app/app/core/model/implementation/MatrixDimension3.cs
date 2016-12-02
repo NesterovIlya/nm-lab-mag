@@ -25,15 +25,17 @@ namespace app.core.model.implementation
             _elements = new double[3, 3];
         }
 
-        public void transpose()
+        public IContainerElement getTransposed()
         {
+            MatrixDimension3 result = new MatrixDimension3();
             for (int i = 0; i < 3; i++)
             {
-                for (int j = i + 1; j < 3; j++)
+                for (int j = 0; j < 3; j++)
                 {
-                    swap(ref _elements[i, j], ref _elements[j, i]);
+                    result[i,j] = _elements[j,i];
                 }
             }
+            return result;
         }
 
         public bool isNeutralElement()
@@ -43,13 +45,6 @@ namespace app.core.model.implementation
                     if (_elements[i, j] != 0)
                         return false;
             return true;
-        }
-
-        private void swap(ref double a, ref double b)
-        {
-            double temp = a;
-            a = b;
-            b = temp;
         }
 
         public double getElement(int row, int column)
@@ -110,10 +105,7 @@ namespace app.core.model.implementation
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    if (_elements[i, j] != matrix._elements[i, j])
-                    {
-                        result[i,j] = _elements[i,j] + matrix[i,j]; 
-                    }
+                    result[i,j] = _elements[i,j] + matrix[i,j]; 
                 }
             }
             return result;
@@ -131,10 +123,7 @@ namespace app.core.model.implementation
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    if (_elements[i, j] != matrix._elements[i, j])
-                    {
-                        result[i, j] = _elements[i, j] - matrix[i, j];
-                    }
+                    result[i, j] = _elements[i, j] - matrix[i, j];
                 }
             }
             return result;
@@ -154,20 +143,9 @@ namespace app.core.model.implementation
         {
             Vector3D result = new Vector3D();
 
-            for (int i = 0; i < 3; i++)
-            {
-                vector.X += _elements[0, i];
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                vector.Y += _elements[1, i];
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                vector.Z += _elements[2, i];
-            }
+            result.X = _elements[0, 0] * vector.X + _elements[0, 1] * vector.Y + _elements[0, 2] * vector.Z;
+            result.Y = _elements[1, 0] * vector.X + _elements[1, 1] * vector.Y + _elements[1, 2] * vector.Z;
+            result.Z = _elements[2, 0] * vector.X + _elements[2, 1] * vector.Y + _elements[2, 2] * vector.Z;
 
             return result;
         }
