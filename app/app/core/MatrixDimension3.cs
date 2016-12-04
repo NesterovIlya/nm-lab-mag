@@ -3,7 +3,7 @@ using System.Windows.Media.Media3D;
 
 namespace app.core
 {
-    class MatrixDimension3 : IContainerElement
+    public class MatrixDimension3 : IContainerElement
     {
         private double[,] _elements;
 
