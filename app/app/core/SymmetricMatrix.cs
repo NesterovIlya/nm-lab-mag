@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace app.core.model.implementation
+namespace app.core
 {
-    class SymmetricMatrix<T> : IContainerElement where T : IContainerElement
+    public class SymmetricMatrix<T> : IContainerElement where T : IContainerElement
     {
         private List<List<T>> _elements;
         private int _dimension;

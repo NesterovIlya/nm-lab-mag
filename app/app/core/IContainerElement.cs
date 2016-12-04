@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace app.core.model
+namespace app.core
 {
-    interface IContainerElement
+    public interface IContainerElement
     {
         IContainerElement getTransposed();
         bool isNeutralElement();

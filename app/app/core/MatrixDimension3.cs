@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Media.Media3D;
 
-namespace app.core.model.implementation
+namespace app.core
 {
     class MatrixDimension3 : IContainerElement
     {
