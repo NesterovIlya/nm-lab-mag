@@ -25,6 +25,23 @@ namespace app.core
             _elements = new double[3, 3];
         }
 
+        public static MatrixDimension3 getFromMatrix(Matrix matrix)
+        {
+            if ((matrix.RowsCount != 3) || (matrix.ColumnsCount != 3))
+            {
+                return null;
+            }
+            MatrixDimension3 result = new MatrixDimension3();
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    result[i, j] = matrix[i, j];
+                }
+            }
+            return result;
+        }
+
         public IContainerElement getTransposed()
         {
             MatrixDimension3 result = new MatrixDimension3();
@@ -40,8 +57,8 @@ namespace app.core
 
         public bool isNeutralElement()
         {
-            for (int i = 0; i < 2; i++)
-                for (int j = 0; j < 2; j++)
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
                     if (_elements[i, j] != 0)
                         return false;
             return true;
