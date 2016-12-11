@@ -10,10 +10,10 @@ using System.Windows.Media.Media3D;
 namespace app_test.core
 {
     [TestClass]
-    public class SolutionManagerTest
+    public class SolutionManagerTest_1
     {
         [TestMethod]
-        public void Test_SolutionManager()
+        public void Test_SolutionManager_1()
         {
             int dimension = 3;
 
@@ -83,10 +83,22 @@ namespace app_test.core
             expmatrixDim3[1, 1] = 9;
             expmatrixDim3[2, 2] = 11;
             expectMatrix.setElement(2, 2, expmatrixDim3);
-            
+
             // Проверка
-            Assert.AreEqual(expectVector.ToString(), rightSide.ToString());
-            Assert.AreEqual(expectMatrix.ToString(), globalMatrix.ToString());
+            foreach (Vector3D vector in rightSide)
+            {
+                Console.Write(vector.ToString() + " ");
+            }
+            Console.WriteLine();
+            foreach (Vector3D vector in expectVector)
+            {
+                Console.Write(vector.ToString() + " ");
+            }
+            Console.WriteLine();
+
+            //Assert.AreEqual(expectVector, rightSide);
+            //Assert.AreEqual(expectMatrix, globalMatrix);
+            Assert.IsTrue(expectMatrix.Equals(globalMatrix), "All is bad");
         }
     }
 }
@@ -113,7 +125,7 @@ namespace app_test.core
 
 0 0 10
 
-Ожмдаемый результат:
+Ожидаемый результат:
 
 Матрица:
 0 1 2   0 0 0   0 0 0 

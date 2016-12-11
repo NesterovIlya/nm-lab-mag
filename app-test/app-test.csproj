@@ -56,7 +56,8 @@
   <ItemGroup>
     <Compile Include="core\ElementsMapTest.cs" />
     <Compile Include="core\HelloWorldTest.cs" />
-    <Compile Include="core\SolutionManagerTest.cs" />
+    <Compile Include="core\SolutionManagerTest_1.cs" />
+    <Compile Include="core\SolutionManagerTest_2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
