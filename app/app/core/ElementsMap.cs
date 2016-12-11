@@ -10,8 +10,8 @@ namespace app.core
     public class ElementsMap
     {
 
-        private static int[,] ELEMENT_DECOMPOSITION = { { 2, 1, 3, 6 }, { 5, 7, 3, 6 }, { 5, 3, 1, 6 }, { 0, 1, 2, 4 }, { 6, 2, 1, 4 }, { 6, 5, 5, 4 } };
-
+        private static int[,] ELEMENT_DECOMPOSITION = { { 2, 1, 3, 6 }, { 5, 7, 3, 6 }, { 5, 3, 1, 6 }, { 0, 1, 2, 4 }, { 6, 2, 1, 4 }, { 6, 1, 5, 4 } };
+        public static int[,] ElementDecomposition { get { return ELEMENT_DECOMPOSITION; } private set {}}
 
         public InputData input { get; private set; }
         public IList<Element> elements { get; private set; }
@@ -93,8 +93,8 @@ namespace app.core
 
                             elem1.nodeI.coefD = - СalculateFormFunctionCoef(elem1.nodeJ.point.X, elem1.nodeK.point.X, elem1.nodeP.point.X, elem1.nodeJ.point.Y, elem1.nodeK.point.Y, elem1.nodeP.point.Y);
                             elem1.nodeJ.coefD = - СalculateFormFunctionCoef(elem1.nodeK.point.X, elem1.nodeP.point.X, elem1.nodeI.point.X, elem1.nodeK.point.Y, elem1.nodeP.point.Y, elem1.nodeI.point.Y);
-                            elem1.nodeK.coefD = - СalculateFormFunctionCoef(elem1.nodeP.point.Y, elem1.nodeI.point.Y, elem1.nodeJ.point.Y, elem1.nodeP.point.Y, elem1.nodeI.point.Y, elem1.nodeJ.point.Y);
-                            elem1.nodeP.coefD = - СalculateFormFunctionCoef(elem1.nodeI.point.Y, elem1.nodeJ.point.Y, elem1.nodeK.point.Y, elem1.nodeI.point.Y, elem1.nodeJ.point.Y, elem1.nodeK.point.Y);
+                            elem1.nodeK.coefD = - СalculateFormFunctionCoef(elem1.nodeP.point.X, elem1.nodeI.point.X, elem1.nodeJ.point.X, elem1.nodeP.point.Y, elem1.nodeI.point.Y, elem1.nodeJ.point.Y);
+                            elem1.nodeP.coefD = - СalculateFormFunctionCoef(elem1.nodeI.point.X, elem1.nodeJ.point.X, elem1.nodeK.point.X, elem1.nodeI.point.Y, elem1.nodeJ.point.Y, elem1.nodeK.point.Y);
 
                             //номер тетраэдра
                             tetrNum = 6 * blockNum + iMap;
