@@ -67,6 +67,7 @@
     <Compile Include="core\HelloWorld.cs" />
     <Compile Include="core\IContainerElement.cs" />
     <Compile Include="core\InputData.cs" />
+    <Compile Include="core\Matrix.cs" />
     <Compile Include="core\MatrixDimension3.cs" />
     <Compile Include="core\Node.cs" />
     <Compile Include="core\SolutionManager.cs" />
