@@ -4,54 +4,57 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_3DModelling"
+          xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="450" Width="525">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto
+                           "/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
-        <!-- Place a Label control at the top of the view. -->
-        <Label 
+
+        <Label Grid.Row="0"
 				HorizontalAlignment="Center" 
-				TextBlock.TextAlignment="Center" 
 				FontSize="20" 
 				Foreground="Red" 
-				Content="Model: Cube"/>
+				Content="Model: Cube"
+            />
+        <StackPanel Grid.Row="1" Height="Auto" VerticalAlignment="Top"  Margin="5,5,5,5">
+            <CheckBox Name="ShowNodes" Content="Отображать узлы" FontSize="20" Checked="ShowNodes_Checked" IsChecked="True" >
+                <CheckBox.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                </CheckBox.Foreground>
+            </CheckBox>
+            <CheckBox Name="ShowRibs" Content="Отображать ребра" FontSize="20" IsChecked="True">
+                <CheckBox.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                </CheckBox.Foreground>
+            </CheckBox>
+            <CheckBox Name="ShowInvisible" Content="Отображать скрытые элементы" FontSize="20"
+                      >
+                <CheckBox.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                </CheckBox.Foreground>
+            </CheckBox>
+        </StackPanel>
         <Slider Height="25" Minimum="0" Maximum="360"
-                Value="{Binding ElementName=rotate, Path= Angle}" Grid.Row="0"/>
-
-        <!-- Viewport3D is the rendering surface. -->
-        <Viewport3D Name="myViewport" Grid.Row="1" >
-
-            <!-- Add a camera. -->
-            <Viewport3D.Camera>
-                <PerspectiveCamera 
-						FarPlaneDistance="20" 
-						LookDirection="1,1,1" 
-						UpDirection="0,1,0" 
-						NearPlaneDistance="1" 
-						Position="-7,-7,-7" 
-						FieldOfView="50" />
-            </Viewport3D.Camera>
-
-            <ModelVisual3D>
-                <ModelVisual3D.Content>
-                    <DirectionalLight
-                            Color="White"
-                            Direction="0,0,1"/>
-                </ModelVisual3D.Content>
-                <ModelVisual3D.Transform>
-                    <RotateTransform3D>
-                        <RotateTransform3D.Rotation>
-                            <AxisAngleRotation3D x:Name="rotate" Axis="0 1 0" />
-                        </RotateTransform3D.Rotation>
-                    </RotateTransform3D>
-                </ModelVisual3D.Transform>
+                Value="{Binding ElementName=rotate, Path= Angle}" Grid.Row="2"/>
+        <HelixToolkit:HelixViewport3D x:Name="viewport" DataContext="Child"  ZoomExtentsWhenLoaded="True" ShowCoordinateSystem="True"   InfiniteSpin="True" MouseDown="viewport_MouseDown" Grid.Row="3" Height="Auto" >
+            <!-- Using the SunLight. Strange thing is: If I use the DefaultLight my Performance gets really bad -->
+            <HelixToolkit:SunLight Brightness="1" >
+            </HelixToolkit:SunLight>
+            <!-- This ModelVisual3D Object should contain my LED cube -->
+            <ModelVisual3D x:Name="cube">
+                
             </ModelVisual3D>
-            
+        </HelixToolkit:HelixViewport3D>
 
-        </Viewport3D>
+
+
+
+
     </Grid>
 </Window>

@@ -13,9 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Media3D;
-
-
-
+using HelixToolkit.Wpf;
 
 namespace _3DModelling
 {
@@ -24,82 +22,92 @@ namespace _3DModelling
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<int> visibleIndeces = new List<int>();
+        int Hx = 3;
+        int Hy = 4;
+        int Hz = 5;
+
+        int Nx = 4;
+        int Ny = 8;
+        int Nz = 5;
+
+        Visualizer visualizer;
+
+        LinesVisual3D ZLines;
+        LinesVisual3D YLines;
+        LinesVisual3D XLines;
+
+        List<SphereVisual3D> nodesModels;
+
         public MainWindow()
         {
             InitializeComponent();
-            MeshGeometry3D meshGeometry3D = new MeshGeometry3D();
-
-            meshGeometry3D.Positions.Add(new Point3D(0, 0, 1));
-            meshGeometry3D.Positions.Add(new Point3D(0, 1, 1));
-            meshGeometry3D.Positions.Add(new Point3D(0, 0, 0));
-            meshGeometry3D.Positions.Add(new Point3D(0, 1, 0));
-            meshGeometry3D.Positions.Add(new Point3D(1, 0, 1));
-            meshGeometry3D.Positions.Add(new Point3D(1, 1, 1));
-            meshGeometry3D.Positions.Add(new Point3D(1, 0, 0));
-            meshGeometry3D.Positions.Add(new Point3D(1, 1, 0));
+            DrawNewNet();
             
-
-            meshGeometry3D.TriangleIndices.Add(0);
-            meshGeometry3D.TriangleIndices.Add(1);
-            meshGeometry3D.TriangleIndices.Add(5);
-
-            meshGeometry3D.TriangleIndices.Add(0);
-            meshGeometry3D.TriangleIndices.Add(5);
-            meshGeometry3D.TriangleIndices.Add(4);
-
-            meshGeometry3D.TriangleIndices.Add(4);
-            meshGeometry3D.TriangleIndices.Add(5);
-            meshGeometry3D.TriangleIndices.Add(7);
-
-            meshGeometry3D.TriangleIndices.Add(4);
-            meshGeometry3D.TriangleIndices.Add(7);
-            meshGeometry3D.TriangleIndices.Add(6);
-
-            meshGeometry3D.TriangleIndices.Add(2);
-            meshGeometry3D.TriangleIndices.Add(3);
-            meshGeometry3D.TriangleIndices.Add(7);
-
-            meshGeometry3D.TriangleIndices.Add(2);
-            meshGeometry3D.TriangleIndices.Add(7);
-            meshGeometry3D.TriangleIndices.Add(6);
-
-            meshGeometry3D.TriangleIndices.Add(0);
-            meshGeometry3D.TriangleIndices.Add(1);
-            meshGeometry3D.TriangleIndices.Add(3);
-
-            meshGeometry3D.TriangleIndices.Add(0);
-            meshGeometry3D.TriangleIndices.Add(3);
-            meshGeometry3D.TriangleIndices.Add(2);
-
-            meshGeometry3D.TriangleIndices.Add(0);
-            meshGeometry3D.TriangleIndices.Add(2);
-            meshGeometry3D.TriangleIndices.Add(4);
-
-            meshGeometry3D.TriangleIndices.Add(4);
-            meshGeometry3D.TriangleIndices.Add(2);
-            meshGeometry3D.TriangleIndices.Add(6);
-
-            meshGeometry3D.TriangleIndices.Add(5);
-            meshGeometry3D.TriangleIndices.Add(1);
-            meshGeometry3D.TriangleIndices.Add(0);
-
-            meshGeometry3D.TriangleIndices.Add(7);
-            meshGeometry3D.TriangleIndices.Add(5);
-            meshGeometry3D.TriangleIndices.Add(0);
-
-
-            SolidColorBrush brush = new SolidColorBrush();
-            brush.Color = Colors.Red;
-            brush.Opacity = 1;
-            Material material = new DiffuseMaterial(brush);
-            
-
-            GeometryModel3D geometry = new GeometryModel3D(meshGeometry3D, material);
-                       
-            ModelUIElement3D model = new ModelUIElement3D();
-            model.Model = geometry;
-
-            myViewport.Children.Add(model);
         }
+
+
+        private void DrawNewNet()
+        {
+            cube.Children.Clear();
+            bool onlyVisible = true;
+            ZLines = new LinesVisual3D();
+            YLines = new LinesVisual3D();
+            YLines = new LinesVisual3D();
+
+            visualizer = new Visualizer(Hx, Hy, Hz, Nx, Ny, Nz);
+
+
+            if (ShowInvisible.IsChecked==true)
+            {
+                onlyVisible = false;
+            }
+
+            nodesModels = visualizer.GetNodesModels(onlyVisible);
+
+            ZLines = visualizer.GetZParallels(onlyVisible);
+            ZLines.Thickness = 1;
+            ZLines.Color = Colors.Blue;
+
+            YLines = visualizer.GetYParallels(onlyVisible);
+            YLines.Thickness = 1;
+            YLines.Color = Colors.Green;
+
+            XLines = visualizer.GetXParallels(onlyVisible);
+            XLines.Thickness = 1;
+            XLines.Color = Colors.Coral;
+
+            foreach (var nodeModel in nodesModels)
+            {
+                cube.Children.Add(nodeModel);
+            }
+
+            cube.Children.Add(ZLines);
+            cube.Children.Add(YLines);
+            cube.Children.Add(XLines);
+        }
+
+
+        private void viewport_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Point currentPoint = e.GetPosition(viewport);
+            if (viewport.FindNearestVisual(currentPoint) != null)
+            {
+                if (viewport.FindNearestVisual(currentPoint).GetType() == typeof(SphereVisual3D))
+                {
+                    ((SphereVisual3D)(viewport.FindNearestVisual(currentPoint))).Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                }
+            }
+            
+        }
+
+        private void ShowNodes_Checked(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+
+
+
     }
 }
