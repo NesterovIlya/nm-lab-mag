@@ -18,10 +18,10 @@ namespace app_test.core
             int dimension = 3;
 
             // Создаем глобальную матрицу
-            MatrixDimension3 matrixDim3 = new MatrixDimension3();
-            SymmetricMatrix<MatrixDimension3> globalMatrix = new SymmetricMatrix<MatrixDimension3>(dimension, matrixDim3);
+            SymmetricMatrix<MatrixDimension3> globalMatrix = new SymmetricMatrix<MatrixDimension3>(dimension, new MatrixDimension3());
             for (int row = 0; row < dimension; row++)
             {
+                MatrixDimension3 matrixDim3 = new MatrixDimension3();
                 matrixDim3[0, 0] = row * row;
                 matrixDim3[0, 1] = row * row + 1;
                 matrixDim3[0, 2] = row * row + 2;
@@ -58,7 +58,7 @@ namespace app_test.core
 
             MatrixDimension3 neitralMatrix = new MatrixDimension3();
             MatrixDimension3 expmatrixDim3 = new MatrixDimension3();
-            SymmetricMatrix<MatrixDimension3> expectMatrix = new SymmetricMatrix<MatrixDimension3>(dimension, neitralMatrix);
+            SymmetricMatrix<MatrixDimension3> expectMatrix = new SymmetricMatrix<MatrixDimension3>(dimension, new MatrixDimension3());
 
             expmatrixDim3[0, 0] = 0;
             expmatrixDim3[0, 1] = 1;
@@ -72,20 +72,31 @@ namespace app_test.core
             expectMatrix.setElement(0, 2, neitralMatrix);
             expectMatrix.setElement(1, 2, neitralMatrix);
 
-            expmatrixDim3 = neitralMatrix;
-            expmatrixDim3[0, 0] = 1;
-            expmatrixDim3[1, 1] = 4;
-            expmatrixDim3[2, 2] = 6;
-            expectMatrix.setElement(1, 1, expmatrixDim3);
+            MatrixDimension3 expmatrixDim3_1 = new MatrixDimension3();
+            expmatrixDim3_1[0, 0] = 1;
+            expmatrixDim3_1[1, 1] = 4;
+            expmatrixDim3_1[2, 2] = 6;
+            expectMatrix.setElement(1, 1, expmatrixDim3_1);
 
-            expmatrixDim3[0, 0] = 4;
-            expmatrixDim3[1, 1] = 7;
-            expmatrixDim3[2, 2] = 9;
-            expectMatrix.setElement(2, 2, expmatrixDim3);
+            MatrixDimension3 expmatrixDim3_2 = new MatrixDimension3();
+            expmatrixDim3_2[0, 0] = 4;
+            expmatrixDim3_2[1, 1] = 7;
+            expmatrixDim3_2[2, 2] = 9;
+            expectMatrix.setElement(2, 2, expmatrixDim3_2);
 
             // Проверка
-            Assert.AreEqual(expectVector, rightSide);
-            Assert.AreEqual(expectMatrix, globalMatrix);
+            foreach (Vector3D vector in rightSide)
+            {
+                Console.Write(vector.ToString() + " ");
+            }
+            Console.WriteLine();
+            foreach (Vector3D vector in expectVector)
+            {
+                Console.Write(vector.ToString() + " ");
+            }
+            Console.WriteLine();
+
+            Assert.IsTrue(expectMatrix.Equals(globalMatrix), "All is bad");
         }
     }
 }
