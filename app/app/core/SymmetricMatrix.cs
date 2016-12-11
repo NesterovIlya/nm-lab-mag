@@ -6,7 +6,7 @@ namespace app.core
     public class SymmetricMatrix<T> : IContainerElement where T : IContainerElement
     {
         private List<List<T>> _elements;
-        private int _dimension;
+        public int Dimension { get; private set; }
         private int _bandWidth;
         private T _neutralElement;
 
@@ -25,9 +25,9 @@ namespace app.core
 
         public SymmetricMatrix(int dimension, T neutralElement)
         {
-            _dimension = dimension;
+            this.Dimension = dimension;
             _elements = new List<List<T>>(dimension);
-            for (int i = 0; i < _dimension; i++)
+            for (int i = 0; i < this.Dimension; i++)
             {
                 _elements.Add(new List<T>());
             }
@@ -36,7 +36,7 @@ namespace app.core
 
         private T getElement(int row, int column)
         {
-            if ((row >= _dimension) || (column >= _dimension))
+            if ((row >= Dimension) || (column >= Dimension))
             {
                 throw new IndexOutOfRangeException();
             }
@@ -56,7 +56,7 @@ namespace app.core
 
         public void setElement(int row, int column, T value)
         {
-            if ((row >= _dimension) || (column >= _dimension))
+            if ((row >= Dimension) || (column >= Dimension))
             {
                 throw new IndexOutOfRangeException();
             }
@@ -146,7 +146,7 @@ namespace app.core
 
         public IContainerElement getNeutralElememt()
         {
-            return new SymmetricMatrix<T>(_dimension, _neutralElement);
+            return new SymmetricMatrix<T>(Dimension, _neutralElement);
         }
 
         public int getBandWidth()
