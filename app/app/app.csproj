@@ -62,6 +62,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\CholeskySolver.cs" />
+    <Compile Include="core\DoubleContainerElement.cs" />
     <Compile Include="core\Element.cs" />
     <Compile Include="core\ElementsMap.cs" />
     <Compile Include="core\HelloWorld.cs" />
