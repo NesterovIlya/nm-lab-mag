@@ -54,6 +54,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="core\CholeskySolverTest.cs" />
     <Compile Include="core\ElementsMapTest.cs" />
     <Compile Include="core\HelloWorldTest.cs" />
     <Compile Include="core\SolutionManagerTest_1.cs" />
