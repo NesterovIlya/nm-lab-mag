@@ -102,7 +102,7 @@ namespace app.core
                 }
             }
         }
-
+        
         private void normalizeRow(int row)
         {
             for (int i = _elements[row].Count - 1; i >= 0; i--)
@@ -154,5 +154,50 @@ namespace app.core
             return _bandWidth;
         }
 
+        public override bool Equals(Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (!obj.GetType().Equals(typeof(SymmetricMatrix<T>)))
+            {
+                return false;
+            }
+
+            SymmetricMatrix<T> anotherMatrix = obj as SymmetricMatrix<T>;
+
+            if (!this.Dimension.Equals(anotherMatrix.Dimension))
+            {
+                return false;
+            }
+
+
+            for (int rowInd = 0; rowInd < _elements.Count; rowInd++)
+            {
+                List<T> currentObjectRow = _elements[rowInd];
+                List<T> anotherObjectRow = anotherMatrix._elements[rowInd];
+
+                if (!currentObjectRow.Count.Equals(anotherObjectRow.Count))
+                {
+                    return false;
+                }
+
+                for (int elementInRowInd = 0; elementInRowInd < currentObjectRow.Count; elementInRowInd++)
+                {
+                    T currentElement = currentObjectRow[elementInRowInd];
+                    T anotherElement = anotherObjectRow[elementInRowInd];
+                    if (!currentElement.Equals(anotherElement))
+                    {
+                        return false;
+                    }
+                }
+
+            }
+            return true;
+        }
+
+
     }
-}
+    }
