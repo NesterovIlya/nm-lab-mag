@@ -42,7 +42,7 @@
         </StackPanel>
         <Slider Height="25" Minimum="0" Maximum="360"
                 Value="{Binding ElementName=rotate, Path= Angle}" Grid.Row="2"/>
-        <HelixToolkit:HelixViewport3D x:Name="viewport" DataContext="Child"  ZoomExtentsWhenLoaded="True" ShowCoordinateSystem="True"   InfiniteSpin="True" MouseDown="viewport_MouseDown" Grid.Row="3" Height="Auto" >
+        <HelixToolkit:HelixViewport3D x:Name="viewport"  DataContext="Child"  ZoomExtentsWhenLoaded="True" ShowCoordinateSystem="True"   InfiniteSpin="True" MouseDown="viewport_MouseDown" Grid.Row="3" Height="Auto" >
             <!-- Using the SunLight. Strange thing is: If I use the DefaultLight my Performance gets really bad -->
             <HelixToolkit:SunLight Brightness="1" >
             </HelixToolkit:SunLight>
