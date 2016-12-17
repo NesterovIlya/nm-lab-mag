@@ -6,7 +6,7 @@ namespace app.core
     public class SymmetricMatrix<T> : IContainerElement where T : IContainerElement
     {
         private List<List<T>> _elements;
-        private int _dimension;
+        public int Dimension { get; private set; }
         private int _bandWidth;
         private T _neutralElement;
 
@@ -25,9 +25,9 @@ namespace app.core
 
         public SymmetricMatrix(int dimension, T neutralElement)
         {
-            _dimension = dimension;
+            this.Dimension = dimension;
             _elements = new List<List<T>>(dimension);
-            for (int i = 0; i < _dimension; i++)
+            for (int i = 0; i < this.Dimension; i++)
             {
                 _elements.Add(new List<T>());
             }
@@ -36,7 +36,7 @@ namespace app.core
 
         private T getElement(int row, int column)
         {
-            if ((row >= _dimension) || (column >= _dimension))
+            if ((row >= Dimension) || (column >= Dimension))
             {
                 throw new IndexOutOfRangeException();
             }
@@ -56,7 +56,7 @@ namespace app.core
 
         public void setElement(int row, int column, T value)
         {
-            if ((row >= _dimension) || (column >= _dimension))
+            if ((row >= Dimension) || (column >= Dimension))
             {
                 throw new IndexOutOfRangeException();
             }
@@ -102,7 +102,7 @@ namespace app.core
                 }
             }
         }
-
+        
         private void normalizeRow(int row)
         {
             for (int i = _elements[row].Count - 1; i >= 0; i--)
@@ -146,7 +146,7 @@ namespace app.core
 
         public IContainerElement getNeutralElememt()
         {
-            return new SymmetricMatrix<T>(_dimension, _neutralElement);
+            return new SymmetricMatrix<T>(Dimension, _neutralElement);
         }
 
         public int getBandWidth()
@@ -154,5 +154,50 @@ namespace app.core
             return _bandWidth;
         }
 
+        public override bool Equals(Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (!obj.GetType().Equals(typeof(SymmetricMatrix<T>)))
+            {
+                return false;
+            }
+
+            SymmetricMatrix<T> anotherMatrix = obj as SymmetricMatrix<T>;
+
+            if (!this.Dimension.Equals(anotherMatrix.Dimension))
+            {
+                return false;
+            }
+
+
+            for (int rowInd = 0; rowInd < _elements.Count; rowInd++)
+            {
+                List<T> currentObjectRow = _elements[rowInd];
+                List<T> anotherObjectRow = anotherMatrix._elements[rowInd];
+
+                if (!currentObjectRow.Count.Equals(anotherObjectRow.Count))
+                {
+                    return false;
+                }
+
+                for (int elementInRowInd = 0; elementInRowInd < currentObjectRow.Count; elementInRowInd++)
+                {
+                    T currentElement = currentObjectRow[elementInRowInd];
+                    T anotherElement = anotherObjectRow[elementInRowInd];
+                    if (!currentElement.Equals(anotherElement))
+                    {
+                        return false;
+                    }
+                }
+
+            }
+            return true;
+        }
+
+
     }
-}
+    }

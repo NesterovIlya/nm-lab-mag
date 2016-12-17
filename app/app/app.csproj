@@ -74,13 +74,18 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\CholeskySolver.cs" />
+    <Compile Include="core\DoubleContainerElement.cs" />
     <Compile Include="core\Element.cs" />
+    <Compile Include="core\GeneralMatrixBuilder.cs" />
     <Compile Include="core\ElementsMap.cs" />
     <Compile Include="core\HelloWorld.cs" />
     <Compile Include="core\IContainerElement.cs" />
     <Compile Include="core\InputData.cs" />
+    <Compile Include="core\Matrix.cs" />
     <Compile Include="core\MatrixDimension3.cs" />
     <Compile Include="core\Node.cs" />
+    <Compile Include="core\SolutionManager.cs" />
     <Compile Include="core\SymmetricMatrix.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

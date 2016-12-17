@@ -46,12 +46,18 @@
       <HintPath>..\app\packages\MSTest.TestFramework.1.0.5-preview\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="core\CholeskySolverTest.cs" />
     <Compile Include="core\ElementsMapTest.cs" />
     <Compile Include="core\HelloWorldTest.cs" />
+    <Compile Include="core\SolutionManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
