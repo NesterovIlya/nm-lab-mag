@@ -198,6 +198,11 @@ namespace app.core
             return true;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
 
     }
-    }
+}

@@ -10,9 +10,16 @@ namespace app.core
     public class ElementsMap
     {
 
+        // Порядок узлов при разбиении блока на тетраэдры
         // i:0, l:1, j:2, k:3, p:4, s:5, q:6, r:7
-        private static int[,] ELEMENT_DECOMPOSITION = { { 2, 1, 3, 6 }, { 5, 7, 3, 6 }, { 5, 3, 1, 6 }, { 0, 1, 2, 4 }, { 6, 2, 1, 4 }, { 6, 1, 5, 4 } };
-        public static int[,] ElementDecomposition { get { return ELEMENT_DECOMPOSITION; } private set {}}
+        private static int[,] ELEMENT_DECOMPOSITION = { 
+            { 2, 1, 3, 6 }, 
+            { 5, 7, 3, 6 }, 
+            { 5, 3, 1, 6 }, 
+            { 0, 1, 2, 4 },
+            { 6, 2, 1, 4 }, 
+            { 6, 1, 5, 4 }
+        };
 
         public InputData input { get; private set; }
         public IList<Element> elements { get; private set; }
@@ -20,7 +27,7 @@ namespace app.core
         // Коэффициент для расчета правой части. Для каждого узла расчитывается \rho * V * g / 4;
         public double[] nodeProportions { get; private set; }
 
-        public ElementsMap(InputData input, List<Vector3D> transitions)
+        public ElementsMap(InputData input)
         {
             this.elements = new List<Element>();
             this.input = input;
@@ -84,33 +91,28 @@ namespace app.core
                             elem.nodeI = createNode(
                                 ELEMENT_DECOMPOSITION[elementTypeIndex, 0],
                                 points,
-                                pointNumbers,
-                                transitions
+                                pointNumbers
                             );
 
                             //узел J тетраэдра
                             elem.nodeJ = createNode(
                                 ELEMENT_DECOMPOSITION[elementTypeIndex, 1],
                                 points,
-                                pointNumbers,
-                                transitions
+                                pointNumbers
                             );
 
                             //узел K тетраэдра
-                            
                             elem.nodeK = createNode(
                                 ELEMENT_DECOMPOSITION[elementTypeIndex, 2],
                                 points,
-                                pointNumbers,
-                                transitions
+                                pointNumbers
                             );
 
                             //узел P тетраэдра
                             elem.nodeP = createNode(
                                 ELEMENT_DECOMPOSITION[elementTypeIndex, 3],
                                 points,
-                                pointNumbers,
-                                transitions
+                                pointNumbers
                             );
 
                             Vector3D ipVec = elem.nodeP.point - elem.nodeI.point;
@@ -178,17 +180,17 @@ namespace app.core
             }
         }
 
-        private Node createNode(int pointIndex, Point3D[] points, int[] pointNumbers, List<Vector3D> transitions) 
+        private Node createNode(int pointIndex, Point3D[] points, int[] pointNumbers) 
         {
-            Vector3D transition = new Vector3D(0, 0, 0);
+            /*Vector3D transition = new Vector3D(0, 0, 0);
             if (transitions != null && transitions.Count > 0)
             {
                 transition = transitions[pointNumbers[pointIndex]];
-            }
+            }*/
 
             return new Node(
-                pointIndex, 
-                new Point3D(points[pointIndex].X, points[pointIndex].Y, points[pointIndex].Z) + transition
+                pointNumbers[pointIndex], 
+                new Point3D(points[pointIndex].X, points[pointIndex].Y, points[pointIndex].Z)// + transition
             );
         }
     }

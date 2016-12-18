@@ -172,5 +172,20 @@ namespace app.core
             return matrix.vectorMultiplication(vector);
         }
 
+        public static MatrixDimension3 operator* (MatrixDimension3 matrix, double value)
+        {
+            MatrixDimension3 result = new MatrixDimension3();
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    result[i, j] = matrix[i, j] * value;
+                }
+            }
+
+            return result;
+        }
+
     }
 }

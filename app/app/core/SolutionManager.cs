@@ -11,34 +11,66 @@ namespace app.core
     {
         private GeneralMatrixBuilder _generalMatrixBuilder = new GeneralMatrixBuilder();
 
+        private CholeskySolver _choleskySolver = new CholeskySolver();
+
         public SolutionManager() { }
 
         public IList<IList<Vector3D>> buildSolution(InputData inputData)
         {
+            // Список перемещений на каждой итерации. Внутренний список - перемещения каждого узла внутри итерации.
             IList<IList<Vector3D>> solutions = new List<IList<Vector3D>>();
 
-            ElementsMap elementsRegistry = new ElementsMap(inputData, null);
-            SymmetricMatrix<MatrixDimension3> generalMatrix = _generalMatrixBuilder.build(elementsRegistry);
+            // Весовой коэффициент (для итеративного процесса)
+            double weightCoef = 0; 
 
-            double weightCoef = 0;
-            double delta = 1 / (double)inputData.iterationsCount;
-            while (weightCoef < 1) {
-                weightCoef += delta;
-                solutions.Add(solveSystem(generalMatrix, elementsRegistry, weightCoef));
+            // Накапливаемые перемещения узлов
+            IList<Vector3D> transitions = new List<Vector3D>();
+
+            for (int iterIndex = 0; iterIndex < inputData.iterationsCount; iterIndex++)
+            {
+                weightCoef += 1 / (double)inputData.iterationsCount;
+                // Формируем реестр элементов
+                ElementsMap elementsRegistry = new ElementsMap(inputData);
+
+                // Генерируем правую часть
+                IList<Vector3D> rightSide = new List<Vector3D>();
+                foreach (double proportionCoef in elementsRegistry.nodeProportions)
+                {
+                    rightSide.Add(new Vector3D(0, 0, proportionCoef * weightCoef));
+                }
+
+                // Формируем обобщенную матрицу
+                SymmetricMatrix<MatrixDimension3> generalMatrix = _generalMatrixBuilder.build(elementsRegistry);
+
+                // Применяем граничные условия
+                applyBoundaryConditions(generalMatrix, rightSide, inputData.boundaryConditions);
+
+                // Решаем систему
+                IList<Vector3D> solution = _choleskySolver.solve(generalMatrix, rightSide);
+
+                if (transitions.Count > 0)
+                {
+                    if (transitions.Count != solution.Count)
+                    {
+                        throw new ArgumentException("Size of transitions and solution list must be the same!");
+                    }
+                    List<Vector3D> buffer = new List<Vector3D>();
+                    for (int nodeIndex = 0; nodeIndex < transitions.Count; nodeIndex++)
+                    {
+                        buffer.Add(solution[nodeIndex] - transitions[nodeIndex]);
+                    }
+                    solutions.Add(buffer);
+                } else
+                {
+                    solutions.Add(solution);
+                }
+
+                transitions = solution;
+
             }
+
 
             return solutions;
-        }
-
-        private IList<Vector3D> solveSystem(SymmetricMatrix<MatrixDimension3> generalMatrix, ElementsMap elementsRegistry, double weightCoef)
-        {
-            IList<Vector3D> rightSide = new List<Vector3D>();
-            foreach (double proportionCoef in elementsRegistry.nodeProportions)
-            {
-                rightSide.Add(new Vector3D(0, 0, proportionCoef * weightCoef));
-            }
-
-            return null;
         }
 
         /*
@@ -47,7 +79,7 @@ namespace app.core
          * rightSide - правая часть
          * boundaryConditions - массив номеров граничных узлов (нумерация начинается с 0!!!!!)
          */
-        public void applyBoundaryConditions(SymmetricMatrix<MatrixDimension3> globalMatrix, IList<Vector3D> rightSide, int[] boundaryConditions)
+        private void applyBoundaryConditions(SymmetricMatrix<MatrixDimension3> globalMatrix, IList<Vector3D> rightSide, int[] boundaryConditions)
         {
             int dimension = globalMatrix.Dimension;
             int bandWidth = globalMatrix.getBandWidth();

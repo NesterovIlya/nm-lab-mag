@@ -40,61 +40,36 @@ namespace app.core
 
         private void createMatrKE(Element element, SymmetricMatrix<MatrixDimension3> matr, Matrix matrixD)
         {
-
             double v = 1/(36 * element.volume * element.volume);
-            Node node = null;
-            for(int i = 0; i < 4; i++)
+            for(int r = 0; r < 4; r++)
             {
-                for(int j = i; j < 4; j++)
+                for(int s = r; s < 4; s++)
                 {
-                    switch(i){
-                        case 0:
-                            node = element.nodeI;
-                            break;
-                        case 1:
-                            node = element.nodeJ;
-                            break;
-                        case 2:
-                            node = element.nodeK;
-                            break;
-                        case 3:
-                            node = element.nodeP;
+                    Node rNode = getNodeByIndex(element, r);
+                    Matrix matrBr = transpose(createMatrB(rNode));
 
-                            break;
-                    }
+                    Node sNode = getNodeByIndex(element, s);
+                    Matrix matrBs = createMatrB(sNode);
 
-                    Matrix matrBi = new Matrix(6, 3);
-                    createMatrB(matrBi, node);
-                    matrBi = transpose(matrBi);
-
-                    switch (j)
-                    {
-                        case 0:
-                            node = element.nodeI;
-                            break;
-                        case 1:
-                            node = element.nodeJ;
-                            break;
-                        case 2:
-                            node = element.nodeK;
-                            break;
-                        case 3:
-                            node = element.nodeP;
-
-                            break;
-                    }
-
-                    Matrix matrBj = new Matrix(6, 3);
-                    createMatrB(matrBj, node);
-                   
-                    MatrixDimension3 matrix = MatrixDimension3.getFromMatrix(matrBi * matrixD * matrBj);
-                    multiply(matrix, v);
-                    int globali = ElementsMap.ElementDecomposition[element.id, i];
-                    int globalj = ElementsMap.ElementDecomposition[element.id, j];
-                    matr[globali, globalj] = matr[globali, globalj] + matrix;
+                    matr[rNode.id, sNode.id] = matr[rNode.id, sNode.id] + MatrixDimension3.getFromMatrix(matrBr * matrixD * matrBs) * v;
                 }
+            } 
+        }
+
+        private Node getNodeByIndex(Element element, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return element.nodeI;
+                case 1:
+                    return element.nodeJ;
+                case 2:
+                    return element.nodeK;
+                case 3:
+                    return element.nodeP;
+                default: throw new IndexOutOfRangeException("Index must be 0,1,2 or 3! Actual: " + index);
             }
-            
         }
 
         private Matrix transpose(Matrix matrix)
@@ -111,33 +86,20 @@ namespace app.core
             return result;
         }
 
-        private void multiply (MatrixDimension3 matrix, double v)
+        private Matrix createMatrB(Node node)
         {
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    matrix[i, j] = matrix[i, j] * v;
-                }
-            }
-        }
-        private void createMatrB(Matrix matrix, Node node)
-        {
-            for (int i = 0; i < matrix.RowsCount; i++)
-            {
-                for (int j = 0; j < matrix.ColumnsCount; j++)
-                {
-                    matrix[0, 0] = node.coefB;
-                    matrix[1, 1] = node.coefC;
-                    matrix[2, 2] = node.coefD;
-                    matrix[3, 0] = node.coefC;
-                    matrix[3, 1] = node.coefB;
-                    matrix[4, 1] = node.coefD;
-                    matrix[4, 2] = node.coefC;
-                    matrix[5, 0] = node.coefD;
-                    matrix[5, 2] = node.coefB;
-                }
-            }
+            Matrix matrix = new Matrix(6, 3);
+            matrix[0, 0] = node.coefB;
+            matrix[1, 1] = node.coefC;
+            matrix[2, 2] = node.coefD;
+            matrix[3, 0] = node.coefC;
+            matrix[3, 1] = node.coefB;
+            matrix[4, 1] = node.coefD;
+            matrix[4, 2] = node.coefC;
+            matrix[5, 0] = node.coefD;
+            matrix[5, 2] = node.coefB;
+
+            return matrix;
         }
 
     }

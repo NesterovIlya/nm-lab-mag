@@ -11,7 +11,7 @@ namespace app.core
     {
         public CholeskySolver() { }
 
-        public List<Vector3D> solve(SymmetricMatrix<MatrixDimension3> globalMatrix, List<Vector3D> rightSide)
+        public IList<Vector3D> solve(SymmetricMatrix<MatrixDimension3> globalMatrix, IList<Vector3D> rightSide)
         {
             SymmetricMatrix<DoubleContainerElement> extarctGlobalMatrix = extractMatrix(globalMatrix);
             
@@ -22,14 +22,14 @@ namespace app.core
             createBCMatrix(BMatrix, CMatrix, extarctGlobalMatrix);
 
             //Решаем систему BMatrix solutionBMatrixList = rightVector
-            List<Double> rightVector = extractVector(rightSide);
-            List<Double> solutionBMatrixList = solveWithBMatrix(BMatrix, rightVector);
+            IList<Double> rightVector = extractVector(rightSide);
+            IList<Double> solutionBMatrixList = solveWithBMatrix(BMatrix, rightVector);
 
             //Решаем систему CMatrix solutionList = solutionBMatrixList
-            List<Double> solutionList = solveWithCMatrix(CMatrix, solutionBMatrixList);
+            IList<Double> solutionList = solveWithCMatrix(CMatrix, solutionBMatrixList);
 
             //Конвертируем список double в список векторов
-            List<Vector3D> solution = extractFromVector(solutionList);
+            IList<Vector3D> solution = extractFromVector(solutionList);
 
             return solution;
         }
@@ -67,10 +67,10 @@ namespace app.core
 			
         }
 
-        private List<Double> solveWithCMatrix(SymmetricMatrix<DoubleContainerElement> CMatrix, List<Double> rightSide)
+        private IList<Double> solveWithCMatrix(SymmetricMatrix<DoubleContainerElement> CMatrix, IList<Double> rightSide)
         {
             int dimension = CMatrix.Dimension;
-            List<Double> solution = new List<Double>();
+            IList<Double> solution = new List<Double>();
 
             for (int index = 0; index < dimension; index++)
                 solution.Insert(index, 0);
@@ -98,9 +98,9 @@ namespace app.core
         }
 
 
-        private List<Double> solveWithBMatrix(SymmetricMatrix<DoubleContainerElement> BMatrix, List<Double> rightSide)
+        private IList<Double> solveWithBMatrix(SymmetricMatrix<DoubleContainerElement> BMatrix, IList<Double> rightSide)
 		{
-			List<Double> solution = new List<Double>();
+			IList<Double> solution = new List<Double>();
 
             if (BMatrix[0, 0].element != 0.0)
                 solution.Insert(0, rightSide[0] / BMatrix[0, 0].element);
@@ -150,9 +150,9 @@ namespace app.core
             return result;
         }
 
-        private List<Double> extractVector(List<Vector3D> sourceList)
+        private IList<Double> extractVector(IList<Vector3D> sourceList)
         {
-            List<Double> result = new List<Double>();
+            IList<Double> result = new List<Double>();
             for (int count = 0; count < sourceList.Count; count++)
             {
                 result.Insert(3 * count, sourceList[count].X);
@@ -163,9 +163,9 @@ namespace app.core
             return result;
         }
 
-        private List<Vector3D> extractFromVector(List<Double> sourceList)
+        private IList<Vector3D> extractFromVector(IList<Double> sourceList)
         {
-            List<Vector3D> result = new List<Vector3D>();
+            IList<Vector3D> result = new List<Vector3D>();
 
             for (int count = 0; count < sourceList.Count / 3; count++) 
             {

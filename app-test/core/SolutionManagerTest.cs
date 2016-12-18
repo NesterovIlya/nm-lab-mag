@@ -12,7 +12,8 @@ namespace app_test.core
     [TestClass]
     public class SolutionManagerTest
     {
-        [TestMethod]
+        //For debugging purpose only
+        //[TestMethod]
         public void Test_ApplyBoundaryConditions_When_DimensionIsGreaterThan2TimesBandwidth()
         {
 
@@ -119,7 +120,7 @@ namespace app_test.core
 
             // Учитываем граничные условия
             SolutionManager solution = new SolutionManager();
-            solution.applyBoundaryConditions(globalMatrix, rightSide, boundaryConditions);
+            //solution.applyBoundaryConditions(globalMatrix, rightSide, boundaryConditions);
 
             // Задаем ожидаемый результат
             Vector3D neitralVector = new Vector3D();
@@ -191,7 +192,8 @@ namespace app_test.core
             Assert.IsTrue(expectMatrix.Equals(globalMatrix));
         }
 
-        [TestMethod]
+        //For debugging purpose only
+        //[TestMethod]
         public void Test_ApplyBoundaryConditions_When_DimensionIsNotGreaterThan2TimesBandwidth()
         {
 
@@ -301,7 +303,7 @@ namespace app_test.core
 
             // Учитываем граничные условия
             SolutionManager solution = new SolutionManager();
-            solution.applyBoundaryConditions(globalMatrix, rightSide, boundaryConditions);
+            //solution.applyBoundaryConditions(globalMatrix, rightSide, boundaryConditions);
 
 
             // Задаем ожидаемый результат
@@ -369,6 +371,29 @@ namespace app_test.core
             Console.WriteLine();
 
             Assert.IsTrue(expectMatrix.Equals(globalMatrix), "All is bad");
+        }
+
+        [TestMethod]
+        public void Test_BuildSolution()
+        {
+            SolutionManager solutionManager = new SolutionManager();
+            //int[] boundaryConditions = new int[2] { 24, 25 };
+            int[] boundaryConditions = new int[5] { 0, 2, 4, 6, 8 };
+            //int[] boundaryConditions = new int[0];
+            InputData inputData = new InputData(
+                1, 1, 1,
+                4, 4, 1,
+                1, 0.44, 1,
+                1,
+                boundaryConditions
+            );
+
+            IList<IList<Vector3D>> solutions = solutionManager.buildSolution(inputData);
+            Assert.AreEqual(1, solutions.Count);
+            foreach (IList<Vector3D> solution in solutions)
+            {
+                Assert.AreEqual(8, solution.Count);
+            }
         }
     }
 }

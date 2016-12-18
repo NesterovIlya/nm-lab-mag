@@ -32,7 +32,7 @@ namespace app_test.core
             int[] boundaryConditions = { 0, 2, 4, 6 };
             InputData inputData = new InputData(hx, hy, hz, Nx, Ny, Nz, elasticityModulus, poissonRatio, density, iterationsCount, boundaryConditions);
 
-            ElementsMap parsedElements = new ElementsMap(inputData, null);
+            ElementsMap parsedElements = new ElementsMap(inputData);
 
             Assert.IsNotNull(parsedElements.input, "Input Data property of elements map must be not null!");
             Assert.AreEqual(inputData, parsedElements.input, "Input Data property of elements map must be equal to inbound input data object.");

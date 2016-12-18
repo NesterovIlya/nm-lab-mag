@@ -83,5 +83,10 @@ namespace app.core
 
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
     }
 }
