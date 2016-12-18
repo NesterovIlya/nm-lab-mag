@@ -31,7 +31,7 @@ namespace app.core
         public double density { get; private set; }
 
         // Запрашиваемое количество итераций, для которых будет расчитано решение
-        public double iterationsCount { get; private set; }
+        public int iterationsCount { get; private set; }
 
         // Список номеров точек, являющихся граничными
         public int[] boundaryConditions { get; private set; }
@@ -47,7 +47,7 @@ namespace app.core
             double _elasticityModulus, 
             double _poissonRatio, 
             double _density, 
-            double _iterationsCount, 
+            int _iterationsCount, 
             int[] _boundaryConditions
         )
         {

@@ -112,10 +112,7 @@ namespace app_test.core
             int boundaryCount = boundaryConditions.Count();
 
             // Задаем правую часть
-            Vector3D rightPart = new Vector3D();
-            rightPart.X = 0;
-            rightPart.Y = 0;
-            rightPart.Z = 10;
+            Vector3D rightPart = new Vector3D(0,0,10);
             List<Vector3D> rightSide = new List<Vector3D>();
             for (int count = 0; count < dimension; count++)
                 rightSide.Insert(count, rightPart);
@@ -191,7 +188,7 @@ namespace app_test.core
             }
             Console.WriteLine();
 
-            Assert.IsTrue(expectMatrix.Equals(globalMatrix), "All is bad");
+            Assert.IsTrue(expectMatrix.Equals(globalMatrix));
         }
 
         [TestMethod]

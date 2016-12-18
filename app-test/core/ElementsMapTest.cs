@@ -32,7 +32,7 @@ namespace app_test.core
             int[] boundaryConditions = { 0, 2, 4, 6 };
             InputData inputData = new InputData(hx, hy, hz, Nx, Ny, Nz, elasticityModulus, poissonRatio, density, iterationsCount, boundaryConditions);
 
-            ElementsMap parsedElements = new ElementsMap(inputData);
+            ElementsMap parsedElements = new ElementsMap(inputData, null);
 
             Assert.IsNotNull(parsedElements.input, "Input Data property of elements map must be not null!");
             Assert.AreEqual(inputData, parsedElements.input, "Input Data property of elements map must be equal to inbound input data object.");
@@ -57,6 +57,7 @@ namespace app_test.core
              */
 
             Element firstExpectedElement = new Element(
+                0,
                 0,
                 new Node(5, new Point3D(1, 0, 1), 0, -1, 1),
                 new Node(3, new Point3D(0, 1, 1), 1, 0, 0),
