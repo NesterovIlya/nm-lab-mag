@@ -383,7 +383,7 @@ namespace app_test.core
             InputData inputData = new InputData(
                 1, 1, 1,
                 4, 4, 1,
-                1, 0.44, 1,
+                200, 0.28, 7.8, //сталь
                 1,
                 boundaryConditions
             );
