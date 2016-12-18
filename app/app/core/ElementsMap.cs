@@ -9,7 +9,7 @@ namespace app.core
 {
     public class ElementsMap
     {
-
+        // i:0, l:1, j:2, k:3, p:4, s:5, q:6, r:7
         private static int[,] ELEMENT_DECOMPOSITION = { { 2, 1, 3, 6 }, { 5, 7, 3, 6 }, { 5, 3, 1, 6 }, { 0, 1, 2, 4 }, { 6, 2, 1, 4 }, { 6, 1, 5, 4 } };
         public static int[,] ElementDecomposition { get { return ELEMENT_DECOMPOSITION; } private set {}}
 
@@ -22,6 +22,7 @@ namespace app.core
             this.elements = new List<Element>();
             this.input = input;
             int blockNum;
+            int startNodeNum;
 
             int sh = 0;
             for (int ix = 0; ix < input.Nx; ix++)
@@ -30,77 +31,95 @@ namespace app.core
                 {
                     for (int iz = 0; iz < input.Nz; iz++)
                     {
-                        Node NodeOne = new Node();
-                        NodeOne.point = new Point3D(ix * input.hx, iy * input.hy, iz * input.hz);
-                        NodeOne.id = sh;
-
-                        //вычисление всех узлов
-                        Point3D[] MassPoint = new Point3D[8];
-                        MassPoint[0] = new Point3D(ix * input.hx, iy * input.hy, (iz + 1) * input.hz);
-                        MassPoint[1] = new Point3D(ix * input.hx, (iy + 1) * input.hy, (iz + 1) * input.hz);
-                        MassPoint[2] = new Point3D((ix + 1) * input.hx, iy * input.hy, (iz + 1) * input.hz);
-                        MassPoint[3] = new Point3D((ix + 1) * input.hx, (iy + 1) * input.hy, (iz + 1) * input.hz);
-
-                        MassPoint[4] = new Point3D(ix * input.hx, iy * input.hy, iz * input.hz);
-                        MassPoint[5] = new Point3D(ix * input.hx, (iy + 1) * input.hy, iz * input.hz);
-                        MassPoint[6] = new Point3D((ix + 1) * input.hx, iy * input.hy, iz * input.hz);
-                        MassPoint[7] = new Point3D((ix + 1) * input.hx, (iy + 1) * input.hy, iz * input.hz);
 
                         //номер кирпича
-                        blockNum = iy * input.Nz + ix * input.Nz * input.Ny + iz;
+                        blockNum = ix * input.Nz * input.Ny + iy * input.Nz + iz;
 
-                        int tetrNum;
+                        // номер ближнего левого нижнего узла кирпича (узел p)
+                        startNodeNum = ix * (input.Nz + 1) * (input.Ny + 1) + iy * (input.Nz + 1) + iz;
+                        /* вычисление номеров узлов кирпича
+                         * 
+                         * узел: i(0) l(1) j(2) k(3) p(4) s(5) q(6) r(7)
+                         *   dx:  0    0    1    1    0    0    1    1
+                         *   dy:  0    1    0    1    0    1    0    1
+                         *   dz:  1    1    1    1    0    0    0    0
+                         *   
+                         *   nodeNum(dx,dy,dz) = 
+                         *      = (ix + dx) * nz' * ny' + (iy + dy) * nz' + (iz + dz) = 
+                         *      = startNodeNum + dx * nz' * ny' + dy * nz' + dz;
+                         */
+                        int[] pointNumbers = new int[8];
+                        pointNumbers[0] = startNodeNum + 1;
+                        pointNumbers[1] = startNodeNum + (input.Nz + 1) + 1;
+                        pointNumbers[2] = startNodeNum + (input.Nz + 1) * (input.Ny + 1) + 1;
+                        pointNumbers[3] = startNodeNum + (input.Nz + 1) * (input.Ny + 1) + (input.Nz + 1) + 1;
+                        pointNumbers[4] = startNodeNum;
+                        pointNumbers[5] = startNodeNum + (input.Nz + 1);
+                        pointNumbers[6] = startNodeNum + (input.Nz + 1) * (input.Ny + 1);
+                        pointNumbers[7] = startNodeNum + (input.Nz + 1) * (input.Ny + 1) + (input.Nz + 1);
 
-                        for (int iMap = 0; iMap < 6; iMap++)
+                        //вычисление координат всех узлов
+                        Point3D[] MassPoint = new Point3D[8];
+                        MassPoint[0] = new Point3D(ix * input.hx, iy * input.hy, (iz + 1) * input.hz);            //i
+                        MassPoint[1] = new Point3D(ix * input.hx, (iy + 1) * input.hy, (iz + 1) * input.hz);      //l
+                        MassPoint[2] = new Point3D((ix + 1) * input.hx, iy * input.hy, (iz + 1) * input.hz);      //j
+                        MassPoint[3] = new Point3D((ix + 1) * input.hx, (iy + 1) * input.hy, (iz + 1) * input.hz);//k
+
+                        MassPoint[4] = new Point3D(ix * input.hx, iy * input.hy, iz * input.hz);                  //p
+                        MassPoint[5] = new Point3D(ix * input.hx, (iy + 1) * input.hy, iz * input.hz);            //s
+                        MassPoint[6] = new Point3D((ix + 1) * input.hx, iy * input.hy, iz * input.hz);            //q
+                        MassPoint[7] = new Point3D((ix + 1) * input.hx, (iy + 1) * input.hy, iz * input.hz);      //r
+
+
+                        for (int elementTypeIndex = 0; elementTypeIndex < 6; elementTypeIndex++)
                         {
 
-                            Element elem1 = new Element();
+                            Element elem = new Element(6 * blockNum + elementTypeIndex, new Node(), new Node(), new Node(), new Node());
 
                             //узел I тетраэдра
-                            int tempElem = ELEMENT_DECOMPOSITION[iMap, 0];
-                            Point3D pointTemp = new Point3D(MassPoint[tempElem].X, MassPoint[tempElem].Y, MassPoint[tempElem].Z);
-                            elem1.nodeI = new Node();
-                            elem1.nodeI.point = pointTemp;
+                            int pointIndex = ELEMENT_DECOMPOSITION[elementTypeIndex, 0];
+                            elem.nodeI.id = pointNumbers[pointIndex];
+                            elem.nodeI.point = new Point3D(MassPoint[pointIndex].X, MassPoint[pointIndex].Y, MassPoint[pointIndex].Z);
 
                             //узел J тетраэдра
-                            tempElem = ELEMENT_DECOMPOSITION[iMap, 1];
-                            pointTemp = new Point3D(MassPoint[tempElem].X, MassPoint[tempElem].Y, MassPoint[tempElem].Z);
-                            elem1.nodeJ = new Node();
-                            elem1.nodeJ.point = pointTemp;
+                            pointIndex = ELEMENT_DECOMPOSITION[elementTypeIndex, 1];
+                            elem.nodeJ.id = pointNumbers[pointIndex];
+                            elem.nodeJ.point = new Point3D(MassPoint[pointIndex].X, MassPoint[pointIndex].Y, MassPoint[pointIndex].Z);
 
                             //узел K тетраэдра
-                            tempElem = ELEMENT_DECOMPOSITION[iMap, 2];
-                            pointTemp = new Point3D(MassPoint[tempElem].X, MassPoint[tempElem].Y, MassPoint[tempElem].Z);
-                            elem1.nodeK = new Node();
-                            elem1.nodeK.point = pointTemp;
+                            pointIndex = ELEMENT_DECOMPOSITION[elementTypeIndex, 2];
+                            elem.nodeK.id = pointNumbers[pointIndex];
+                            elem.nodeK.point = new Point3D(MassPoint[pointIndex].X, MassPoint[pointIndex].Y, MassPoint[pointIndex].Z);
 
                             //узел P тетраэдра
-                            tempElem = ELEMENT_DECOMPOSITION[iMap, 3];
-                            pointTemp = new Point3D(MassPoint[tempElem].X, MassPoint[tempElem].Y, MassPoint[tempElem].Z);
-                            elem1.nodeP = new Node();
-                            elem1.nodeP.point = pointTemp;
+                            pointIndex = ELEMENT_DECOMPOSITION[elementTypeIndex, 3];
+                            elem.nodeP.id = pointNumbers[pointIndex];
+                            elem.nodeP.point = new Point3D(MassPoint[pointIndex].X, MassPoint[pointIndex].Y, MassPoint[pointIndex].Z);
 
-                            //коэффициенты функции формы
-                            elem1.nodeI.coefB = - СalculateFormFunctionCoef(elem1.nodeJ.point.Y, elem1.nodeK.point.Y, elem1.nodeP.point.Y, elem1.nodeJ.point.Z, elem1.nodeK.point.Z, elem1.nodeP.point.Z);
-                            elem1.nodeJ.coefB = - СalculateFormFunctionCoef(elem1.nodeK.point.Y, elem1.nodeP.point.Y, elem1.nodeI.point.Y, elem1.nodeK.point.Z, elem1.nodeP.point.Z, elem1.nodeI.point.Z);
-                            elem1.nodeK.coefB = - СalculateFormFunctionCoef(elem1.nodeP.point.Y, elem1.nodeI.point.Y, elem1.nodeJ.point.Y, elem1.nodeP.point.Z, elem1.nodeI.point.Z, elem1.nodeJ.point.Z);
-                            elem1.nodeP.coefB = - СalculateFormFunctionCoef(elem1.nodeI.point.Y, elem1.nodeJ.point.Y, elem1.nodeK.point.Y, elem1.nodeI.point.Z, elem1.nodeJ.point.Z, elem1.nodeK.point.Z);
+                            /* 
+                            * Расчет коэффициентов функции формы: (запись x_ij означает x_i - x_j)
+                            * b = (b_i, b_j, b_k, b_p)                 c = (c_i, c_j, c_k, c_p)                d = (d_i, d_j, d_k, d_p)            
+                            * b_i = - (y_kj * z_pj - y_pj * z_kj);     c_i = x_kj * z_pj - x_pj * z_kj;    d_i = - (x_kj * y_pj - x_pj * y_kj);                   
+                            * b_j = - (y_pk * z_ik - y_ik * z_pk);     c_j = x_pk * z_ik - x_ik * z_pk;    d_j = - (x_pk * y_ik - x_ik * y_pk);
+                            * b_k = - (y_ip * z_jp - y_jp * z_ip);     c_k = x_ip * z_jp - x_jp * z_ip;    d_k = - (x_ip * y_jp - x_jp * y_ip);
+                            * b_p = - (y_ji * z_ki - y_ki * z_ji);     c_p = x_ji * z_ki - x_ki * z_ji;    d_p = - (x_ji * y_ki - x_ki * y_ji);                 
+                            */
+                            elem.nodeI.coefB = - СalculateFormFunctionCoef(elem.nodeJ.point.Y, elem.nodeK.point.Y, elem.nodeP.point.Y, elem.nodeJ.point.Z, elem.nodeK.point.Z, elem.nodeP.point.Z);
+                            elem.nodeJ.coefB = - СalculateFormFunctionCoef(elem.nodeK.point.Y, elem.nodeP.point.Y, elem.nodeI.point.Y, elem.nodeK.point.Z, elem.nodeP.point.Z, elem.nodeI.point.Z);
+                            elem.nodeK.coefB = - СalculateFormFunctionCoef(elem.nodeP.point.Y, elem.nodeI.point.Y, elem.nodeJ.point.Y, elem.nodeP.point.Z, elem.nodeI.point.Z, elem.nodeJ.point.Z);
+                            elem.nodeP.coefB = - СalculateFormFunctionCoef(elem.nodeI.point.Y, elem.nodeJ.point.Y, elem.nodeK.point.Y, elem.nodeI.point.Z, elem.nodeJ.point.Z, elem.nodeK.point.Z);
 
-                            elem1.nodeI.coefC = СalculateFormFunctionCoef(elem1.nodeJ.point.X, elem1.nodeK.point.X, elem1.nodeP.point.X, elem1.nodeJ.point.Z, elem1.nodeK.point.Z, elem1.nodeP.point.Z);
-                            elem1.nodeJ.coefC = СalculateFormFunctionCoef(elem1.nodeK.point.X, elem1.nodeP.point.X, elem1.nodeI.point.X, elem1.nodeK.point.Z, elem1.nodeP.point.Z, elem1.nodeI.point.Z);
-                            elem1.nodeK.coefC = СalculateFormFunctionCoef(elem1.nodeP.point.X, elem1.nodeI.point.X, elem1.nodeJ.point.X, elem1.nodeP.point.Z, elem1.nodeI.point.Z, elem1.nodeJ.point.Z);
-                            elem1.nodeP.coefC = СalculateFormFunctionCoef(elem1.nodeI.point.X, elem1.nodeJ.point.X, elem1.nodeK.point.X, elem1.nodeI.point.Z, elem1.nodeJ.point.Z, elem1.nodeK.point.Z);
+                            elem.nodeI.coefC = СalculateFormFunctionCoef(elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeJ.point.Z, elem.nodeK.point.Z, elem.nodeP.point.Z);
+                            elem.nodeJ.coefC = СalculateFormFunctionCoef(elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeK.point.Z, elem.nodeP.point.Z, elem.nodeI.point.Z);
+                            elem.nodeK.coefC = СalculateFormFunctionCoef(elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeP.point.Z, elem.nodeI.point.Z, elem.nodeJ.point.Z);
+                            elem.nodeP.coefC = СalculateFormFunctionCoef(elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeI.point.Z, elem.nodeJ.point.Z, elem.nodeK.point.Z);
 
-                            elem1.nodeI.coefD = - СalculateFormFunctionCoef(elem1.nodeJ.point.X, elem1.nodeK.point.X, elem1.nodeP.point.X, elem1.nodeJ.point.Y, elem1.nodeK.point.Y, elem1.nodeP.point.Y);
-                            elem1.nodeJ.coefD = - СalculateFormFunctionCoef(elem1.nodeK.point.X, elem1.nodeP.point.X, elem1.nodeI.point.X, elem1.nodeK.point.Y, elem1.nodeP.point.Y, elem1.nodeI.point.Y);
-                            elem1.nodeK.coefD = - СalculateFormFunctionCoef(elem1.nodeP.point.X, elem1.nodeI.point.X, elem1.nodeJ.point.X, elem1.nodeP.point.Y, elem1.nodeI.point.Y, elem1.nodeJ.point.Y);
-                            elem1.nodeP.coefD = - СalculateFormFunctionCoef(elem1.nodeI.point.X, elem1.nodeJ.point.X, elem1.nodeK.point.X, elem1.nodeI.point.Y, elem1.nodeJ.point.Y, elem1.nodeK.point.Y);
+                            elem.nodeI.coefD = - СalculateFormFunctionCoef(elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeJ.point.Y, elem.nodeK.point.Y, elem.nodeP.point.Y);
+                            elem.nodeJ.coefD = - СalculateFormFunctionCoef(elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeK.point.Y, elem.nodeP.point.Y, elem.nodeI.point.Y);
+                            elem.nodeK.coefD = - СalculateFormFunctionCoef(elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeP.point.Y, elem.nodeI.point.Y, elem.nodeJ.point.Y);
+                            elem.nodeP.coefD = - СalculateFormFunctionCoef(elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeI.point.Y, elem.nodeJ.point.Y, elem.nodeK.point.Y);
 
-                            //номер тетраэдра
-                            tetrNum = 6 * blockNum + iMap;
-                            elem1.id = tetrNum;
-
-                            elements.Add(elem1);
+                            elements.Add(elem);
 
                         }
 

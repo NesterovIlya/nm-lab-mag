@@ -13,7 +13,7 @@ namespace app_test.core
     public class CholeskySolverTest
     {
         [TestMethod]
-        public void Test_solve()
+        public void Test_Solve2Dimension()
         {
             /*
                 Созданная матрица:
@@ -112,6 +112,7 @@ namespace app_test.core
 
         }
 
+        //For debugging purpose only
         //[TestMethod]
         public void Test_ExtractVector()
         {
@@ -132,6 +133,7 @@ namespace app_test.core
             //Assert.IsTrue(sourceVector.Equals(resVector));
         }
 
+        //For debugging purpose only
         //[TestMethod]
         public void Test_CreateBCMatrix()
         {
@@ -253,6 +255,7 @@ namespace app_test.core
 
         }
 
+        //For debugging purpose only
         //[TestMethod]
         public void Test_ExtractMatrix()
         {
