@@ -63,6 +63,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GridBuilder.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="ViewModel.cs" />
     <Compile Include="Visualizer.cs" />
@@ -106,6 +107,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\app\app\app.csproj">
+      <Project>{170a1c35-f489-4479-842f-c252fdea3e10}</Project>
+      <Name>app</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -23,33 +23,33 @@
 				Content="Model: Cube"
             />
         <StackPanel Grid.Row="1" Height="Auto" VerticalAlignment="Top"  Margin="5,5,5,5">
-            <CheckBox Name="ShowNodes" Content="Отображать узлы" FontSize="20" Checked="ShowNodes_Checked" IsChecked="True" >
+            <CheckBox Name="ShowNodes" Content="Отображать узлы" FontSize="20" Checked="ShowNodes_Checked" IsChecked="True" Unchecked="ShowNodes_Unchecked" >
                 <CheckBox.Foreground>
                     <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
                 </CheckBox.Foreground>
             </CheckBox>
-            <CheckBox Name="ShowRibs" Content="Отображать ребра" FontSize="20" IsChecked="True">
+            <CheckBox Name="ShowRibs" Content="Отображать ребра" FontSize="20" IsChecked="True" Checked="ShowRibs_Checked" Unchecked="ShowRibs_Unchecked">
                 <CheckBox.Foreground>
                     <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
                 </CheckBox.Foreground>
             </CheckBox>
-            <CheckBox Name="ShowInvisible" Content="Отображать скрытые элементы" FontSize="20"
+            <CheckBox Name="ShowInvisible" Content="Отображать скрытые элементы" FontSize="20" Checked="ShowInvisible_Checked" Unchecked="ShowInvisible_Unchecked"
                       >
                 <CheckBox.Foreground>
                     <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
                 </CheckBox.Foreground>
             </CheckBox>
+            <Button Name="Execute" Content="Выполнить" Click="Execute_Click" />
         </StackPanel>
-        <Slider Height="25" Minimum="0" Maximum="360"
-                Value="{Binding ElementName=rotate, Path= Angle}" Grid.Row="2"/>
+        <Slider Name ="StateSlider" Height="25" Grid.Row="2" ValueChanged="StateSlider_ValueChanged"/>
         <HelixToolkit:HelixViewport3D x:Name="viewport"  DataContext="Child"  ZoomExtentsWhenLoaded="True" ShowCoordinateSystem="True"   InfiniteSpin="True" MouseDown="viewport_MouseDown" Grid.Row="3" Height="Auto" >
             <!-- Using the SunLight. Strange thing is: If I use the DefaultLight my Performance gets really bad -->
             <HelixToolkit:SunLight Brightness="1" >
             </HelixToolkit:SunLight>
             <!-- This ModelVisual3D Object should contain my LED cube -->
-            <ModelVisual3D x:Name="cube">
-                
-            </ModelVisual3D>
+            <ModelVisual3D x:Name="grid"/>
+            <ModelVisual3D x:Name="points"/>
+
         </HelixToolkit:HelixViewport3D>
 
 

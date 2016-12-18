@@ -19,48 +19,30 @@ namespace _3DModelling
 {
     class Visualizer
     {
-        private int Hx;
-        private int Hy;
-        private int Hz;
-
         private int Nx;
         private int Ny;
         private int Nz;
+        private bool ShowHidden;
 
         List<int> visibleIndeces = new List<int>();
-
+        List<int> fixedIndeces = new List<int>();
         private List<Point3D> nodesPoints = new List<Point3D>();
 
-        private void FindNodesPoints()
-        {
-            for (int i = 0; i < Nx; i++)
-            {
-                for (int j = 0; j < Ny; j++)
-                {
-                    for (int k = 0; k < Nz; k++)
-                    {
-                        nodesPoints.Add(new Point3D(Hx * i, Hy * j, Hz * k));
-                    }
-                }
-            }
-        }
-
-        public Visualizer(int Hx, int Hy, int Hz, int Nx, int Ny, int Nz)
+        public Visualizer(int Nx, int Ny, int Nz, List<Point3D> nodesPoints,List<int> visibleIndeces, List<int> fixedIndeces, bool showHidden)
         {
 
-            this.Hx = Hx;
-            this.Hy = Hy;
-            this.Hz = Hz;
+            
             this.Nx = Nx;
             this.Ny = Ny;
             this.Nz = Nz;
-
-            FindNodesPoints();
-            FindVisibleIndices();
+            this.nodesPoints = nodesPoints;
+            this.visibleIndeces = visibleIndeces;
+            this.fixedIndeces = fixedIndeces;
+            this.ShowHidden = showHidden;
         }
 
 
-        public List<SphereVisual3D> GetNodesModels(bool onlyVisible)
+        public List<SphereVisual3D> GetNodesModels()
         {
             List<SphereVisual3D> nodesModels = new List<SphereVisual3D>();
 
@@ -70,9 +52,17 @@ namespace _3DModelling
                 SphereVisual3D nodeModel = new SphereVisual3D();
                 nodeModel.Center = nodesPoints[i];
                 nodeModel.Radius = 0.25;
-                nodeModel.Material = new DiffuseMaterial(new SolidColorBrush(Colors.LightBlue));
+                if (fixedIndeces.Contains(i))
+                {
+                  nodeModel.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                }
+                else
+                {
+                  nodeModel.Material = new DiffuseMaterial(new SolidColorBrush(Colors.LightBlue));
+                }
+                
 
-                if (onlyVisible)
+                if (!ShowHidden)
                 {
                     if (visibleIndeces.Contains(i))
                         nodesModels.Add(nodeModel);
@@ -85,14 +75,19 @@ namespace _3DModelling
             return nodesModels;
         }
 
-        public LinesVisual3D GetZParallels(bool onlyVisible)
+        public List<Point3D> GetNodesPoints()
+        {           
+            return nodesPoints;
+        }
+
+        public LinesVisual3D GetZParallels()
         {
             LinesVisual3D ZLines = new LinesVisual3D();
             for (int i = 0; i < Nx * Ny; i++)
             {
                 for (int j = i * Nz; j < Nz * (i + 1) - 1; j++)
                 {
-                    if (onlyVisible)
+                    if (!ShowHidden)
                     {
                         if (visibleIndeces.Contains(j) && visibleIndeces.Contains(j + 1))
                         {
@@ -111,7 +106,7 @@ namespace _3DModelling
         }
 
 
-        public LinesVisual3D GetYParallels(bool onlyVisible)
+        public LinesVisual3D GetYParallels()
         {
             LinesVisual3D YLines = new LinesVisual3D();
 
@@ -121,7 +116,7 @@ namespace _3DModelling
                 {
                     for (int k = j; k < j + Ny * Nz - Nz; k += Nz)
                     {
-                        if (onlyVisible)
+                        if (!ShowHidden)
                         {
                             if (visibleIndeces.Contains(k) && visibleIndeces.Contains(k + Nz))
                             {
@@ -141,7 +136,7 @@ namespace _3DModelling
             return YLines;
         }
 
-        public LinesVisual3D GetXParallels(bool onlyVisible)
+        public LinesVisual3D GetXParallels()
         {
             LinesVisual3D XLines = new LinesVisual3D();
 
@@ -151,7 +146,7 @@ namespace _3DModelling
                 {
                     for (int k = j; k < j + Nx * Ny * Nz - Ny * Nz; k += Ny * Nz)
                     {
-                        if (onlyVisible)
+                        if (!ShowHidden)
                         {
                             if (visibleIndeces.Contains(k) && visibleIndeces.Contains(k + Ny * Nz))
                             {
@@ -169,85 +164,6 @@ namespace _3DModelling
             }
             return XLines;
         }
-
-
-
-        private void FindBackSideVisibleIndices()
-        {
-            for (int i = 0; i < Ny * Nz; i++)
-            {
-                visibleIndeces.Add(i);
-            }
-        }
-
-
-        private void FindFrontSideVisibleIndices()
-        {
-            for (int i = Nx * Ny * Nz - Ny * Nz; i < Nx * Ny * Nz; i++)
-            {
-                visibleIndeces.Add(i);
-            }
-        }
-
-        private void FindRightSideVisibleIndices()
-        {
-            for (int i = 0; i < Nx * Ny * Nz - Ny * Nz; i += Ny * Nz)
-            {
-                for (int j = i; j < i + Nz; j++)
-                {
-                    visibleIndeces.Add(j);
-                }
-            }
-        }
-
-        private void FindLeftSideVisibleIndices()
-        {
-            for (int i = Ny * Nz - Nz; i < Nx * Ny * Nz - Nz; i += Ny * Nz)
-            {
-                for (int j = i; j < i + Nz; j++)
-                {
-                    visibleIndeces.Add(j);
-                }
-            }
-        }
-
-        private void FindUpperSideVisibleIndices()
-        {
-            for (int i = Nz - 1; i < Nx * Ny * Nz - Ny * Nz + Nz; i += Ny * Nz)
-            {
-                for (int j = i; j < Nx * Ny * Nz; j += Nz)
-                {
-                    visibleIndeces.Add(j);
-                }
-
-            }
-        }
-
-        private void FindLowerSideVisibleIndeces()
-        {
-            for (int i = 0; i < Nx * Ny * Nz - Ny * Nz; i += Ny * Nz)
-            {
-                for (int j = i; j < Nx * Ny * Nz - Nz; j += Nz)
-                {
-                    visibleIndeces.Add(j);
-                }
-
-            }
-        }
-
-
-        private void FindVisibleIndices()
-        {
-            FindBackSideVisibleIndices();
-            FindFrontSideVisibleIndices();
-            FindLeftSideVisibleIndices();
-            FindRightSideVisibleIndices();
-            FindUpperSideVisibleIndices();
-            FindLowerSideVisibleIndeces();
-        }
-
-
-       
-
+        
     }
 }
