@@ -28,6 +28,15 @@ namespace _3DModelling
         List<int> fixedIndeces = new List<int>();
         private List<Point3D> nodesPoints = new List<Point3D>();
 
+        LinesVisual3D outerXParallels = new LinesVisual3D();
+        LinesVisual3D outerYParallels = new LinesVisual3D();
+        LinesVisual3D outerZParallels = new LinesVisual3D();
+        LinesVisual3D outerParallels = new LinesVisual3D();
+        LinesVisual3D innerXParallels = new LinesVisual3D();
+        LinesVisual3D innerYParallels = new LinesVisual3D();
+        LinesVisual3D innerZParallels = new LinesVisual3D();
+        LinesVisual3D innerParallels = new LinesVisual3D();
+
         public Visualizer(int Nx, int Ny, int Nz, List<Point3D> nodesPoints,List<int> visibleIndeces, List<int> fixedIndeces, bool showHidden)
         {
 
@@ -54,23 +63,34 @@ namespace _3DModelling
                 nodeModel.Radius = 0.25;
                 if (fixedIndeces.Contains(i))
                 {
-                  nodeModel.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                  nodeModel.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Magenta));
                 }
                 else
                 {
-                  nodeModel.Material = new DiffuseMaterial(new SolidColorBrush(Colors.LightBlue));
+                  nodeModel.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
                 }
                 
 
                 if (!ShowHidden)
                 {
-                    if (visibleIndeces.Contains(i))
-                        nodesModels.Add(nodeModel);
+
+                    if (!visibleIndeces.Contains(i))
+                    {
+                        nodeModel.Visible = false;
+                    }
+                    
                 }
                 else
                 {
-                    nodesModels.Add(nodeModel);
-                }                
+                    if (!visibleIndeces.Contains(i))
+                    {
+                        nodeModel.Material = new DiffuseMaterial(new SolidColorBrush(Colors.SkyBlue));
+                    }
+                    
+                }
+
+                nodesModels.Add(nodeModel);
+                             
             }
             return nodesModels;
         }
@@ -87,19 +107,17 @@ namespace _3DModelling
             {
                 for (int j = i * Nz; j < Nz * (i + 1) - 1; j++)
                 {
-                    if (!ShowHidden)
+                    if (visibleIndeces.Contains(j) && visibleIndeces.Contains(j + 1))
                     {
-                        if (visibleIndeces.Contains(j) && visibleIndeces.Contains(j + 1))
-                        {
-                            ZLines.Points.Add(nodesPoints[j]);
-                            ZLines.Points.Add(nodesPoints[j + 1]);
-                        }
+                        outerZParallels.Points.Add(nodesPoints[j]);
+                        outerZParallels.Points.Add(nodesPoints[j + 1]);
                     }
                     else
                     {
-                        ZLines.Points.Add(nodesPoints[j]);
-                        ZLines.Points.Add(nodesPoints[j + 1]);
+                        innerZParallels.Points.Add(nodesPoints[j]);
+                        innerZParallels.Points.Add(nodesPoints[j + 1]);
                     }
+                   
                 }
             }
             return ZLines;
@@ -116,18 +134,17 @@ namespace _3DModelling
                 {
                     for (int k = j; k < j + Ny * Nz - Nz; k += Nz)
                     {
-                        if (!ShowHidden)
+                        if (visibleIndeces.Contains(k) && visibleIndeces.Contains(k + Nz))
                         {
-                            if (visibleIndeces.Contains(k) && visibleIndeces.Contains(k + Nz))
-                            {
-                                YLines.Points.Add(nodesPoints[k]);
-                                YLines.Points.Add(nodesPoints[k + Nz]);
-                            }
+                            outerYParallels.Points.Add(nodesPoints[k]);
+                            outerYParallels.Points.Add(nodesPoints[k + Nz]);
                         }
+
+
                         else
                         {
-                            YLines.Points.Add(nodesPoints[k]);
-                            YLines.Points.Add(nodesPoints[k + Nz]);
+                            innerYParallels.Points.Add(nodesPoints[k]);
+                            innerYParallels.Points.Add(nodesPoints[k + Nz]);
                         }
                     }
                 }
@@ -146,24 +163,71 @@ namespace _3DModelling
                 {
                     for (int k = j; k < j + Nx * Ny * Nz - Ny * Nz; k += Ny * Nz)
                     {
-                        if (!ShowHidden)
+
+                        if (visibleIndeces.Contains(k) && visibleIndeces.Contains(k + Ny * Nz))
                         {
-                            if (visibleIndeces.Contains(k) && visibleIndeces.Contains(k + Ny * Nz))
-                            {
-                                XLines.Points.Add(nodesPoints[k]);
-                                XLines.Points.Add(nodesPoints[k + Ny * Nz]);
-                            }
+                            outerXParallels.Points.Add(nodesPoints[k]);
+                            outerXParallels.Points.Add(nodesPoints[k + Ny * Nz]);
                         }
+
                         else
                         {
-                            XLines.Points.Add(nodesPoints[k]);
-                            XLines.Points.Add(nodesPoints[k + Ny * Nz]);
+                            innerXParallels.Points.Add(nodesPoints[k]);
+                            innerXParallels.Points.Add(nodesPoints[k + Ny * Nz]);
                         }
                     }
                 }
             }
             return XLines;
         }
-        
+
+        public LinesVisual3D getOuterParallels()
+        {
+            foreach (var point in outerXParallels.Points)
+            {
+                outerParallels.Points.Add(point);
+            }
+            foreach (var point in outerYParallels.Points)
+            {
+                outerParallels.Points.Add(point);
+            }
+            foreach (var point in outerZParallels.Points)
+            {
+                outerParallels.Points.Add(point);
+            }
+
+            outerParallels.Thickness = 1;
+            outerParallels.Color = Colors.Blue;
+
+            return outerParallels;
+        }
+
+        public LinesVisual3D getInnerParallels()
+        {
+            foreach (var point in innerXParallels.Points)
+            {
+                innerParallels.Points.Add(point);
+            }
+            foreach (var point in innerYParallels.Points)
+            {
+                innerParallels.Points.Add(point);
+            }
+            foreach (var point in innerZParallels.Points)
+            {
+                innerParallels.Points.Add(point);
+            }
+
+            if (!ShowHidden)
+            {
+                innerParallels.Thickness = 0;
+            }
+            else
+            {
+                innerParallels.Thickness = 0.7;
+                innerParallels.Color = Colors.SkyBlue;
+            }
+
+            return innerParallels;
+        }
     }
 }

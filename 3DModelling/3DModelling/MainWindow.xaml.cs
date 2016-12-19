@@ -55,9 +55,8 @@ namespace _3DModelling
 
         Visualizer visualizer;
 
-        LinesVisual3D ZLines;
-        LinesVisual3D YLines;
-        LinesVisual3D XLines;
+        LinesVisual3D outerLines;
+        LinesVisual3D innerLines;
 
         List<SphereVisual3D> nodesModels;
 
@@ -101,22 +100,31 @@ namespace _3DModelling
             points.Children.Clear();
             grid.Children.Clear();
 
-            ZLines = new LinesVisual3D();
-            YLines = new LinesVisual3D();
-            XLines = new LinesVisual3D();
-         
+            outerLines = new LinesVisual3D();
+            innerLines = new LinesVisual3D();
+            
+
             visualizer = new Visualizer(Nx, Ny, Nz, currentPointsState, visibleIndeces, fixedIndeces, showHidden);
 
             nodesModels = visualizer.GetNodesModels();
-            
-            ZLines = visualizer.GetZParallels();           
-            ZLines.Color = Colors.Blue;
 
-            YLines = visualizer.GetYParallels();            
-            YLines.Color = Colors.Green;
+            visualizer.GetXParallels();
+            visualizer.GetYParallels();
+            visualizer.GetZParallels();
 
-            XLines = visualizer.GetXParallels();            
-            XLines.Color = Colors.Coral;
+            outerLines = visualizer.getOuterParallels();
+            innerLines = visualizer.getInnerParallels();
+            /*
+           ZLines = visualizer.GetZParallels();           
+           ZLines.Color = Colors.Blue;
+
+           YLines = visualizer.GetYParallels();            
+           YLines.Color = Colors.Green;
+
+           XLines = visualizer.GetXParallels();            
+           XLines.Color = Colors.Coral;
+           */
+
 
             ChangeRibsState(showRibs);
 
@@ -127,9 +135,8 @@ namespace _3DModelling
                 points.Children.Add(nodeModel);
             }
 
-            grid.Children.Add(ZLines);
-            grid.Children.Add(YLines);
-            grid.Children.Add(XLines);
+            grid.Children.Add(outerLines);
+            grid.Children.Add(innerLines);
         }
 
        
@@ -146,12 +153,12 @@ namespace _3DModelling
                     if (!fixedIndeces.Contains(fixedNode))
                     {
                         fixedIndeces.Add(fixedNode);
-                        ((SphereVisual3D)(viewport.FindNearestVisual(currentPoint))).Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                        ((SphereVisual3D)(viewport.FindNearestVisual(currentPoint))).Material = new DiffuseMaterial(new SolidColorBrush(Colors.Magenta));
                     }
                     else
                     {
                         fixedIndeces.RemoveAt(fixedIndeces.IndexOf(fixedNode));
-                        ((SphereVisual3D)(viewport.FindNearestVisual(currentPoint))).Material = new DiffuseMaterial(new SolidColorBrush(Colors.LightBlue));
+                        ((SphereVisual3D)(viewport.FindNearestVisual(currentPoint))).Material = new DiffuseMaterial(new SolidColorBrush(Colors.Blue));
                     }
                 }
             }
