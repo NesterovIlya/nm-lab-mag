@@ -377,13 +377,11 @@ namespace app_test.core
         public void Test_BuildSolution()
         {
             SolutionManager solutionManager = new SolutionManager();
-            //int[] boundaryConditions = new int[2] { 24, 25 };
-            int[] boundaryConditions = new int[7] { 0, 2, 3, 4, 5, 6, 7 };
-            //int[] boundaryConditions = new int[0];
+            int[] boundaryConditions = new int[2] { 0, 2 };
             InputData inputData = new InputData(
                 2, 2, 2,
                 1, 1, 1,
-                700, 0.44, 7.8, //сталь
+                200 * 1000000, 0.44, 7800, //сталь
                 1,
                 boundaryConditions
             );

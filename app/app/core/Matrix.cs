@@ -143,5 +143,18 @@ namespace app.core
             return a.multiply(b);
         }
 
+        public static Matrix operator *(Matrix a, double b)
+        {
+            Matrix result = new Matrix(a.RowsCount, a.ColumnsCount);
+            for (int i = 0; i < a.RowsCount; i++)
+            {
+                for (int j = 0; j < a.ColumnsCount; j++)
+                {
+                    result[i, j] = a[j, i] * b;
+                }
+            }
+            return result;
+        }
+
     }
 }

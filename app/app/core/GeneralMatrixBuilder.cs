@@ -19,15 +19,17 @@ namespace app.core
             SymmetricMatrix<MatrixDimension3> result = new SymmetricMatrix<MatrixDimension3>((input.Nx + 1) * (input.Ny + 1) * (input.Nz + 1), new MatrixDimension3());
             
             Matrix matrixD = new Matrix(6, 6);
-            matrixD.setElement(0, 0, 1);
-            matrixD.setElement(0, 1, input.poissonRatio / (1 - input.poissonRatio));
-            matrixD.setElement(0, 2, input.poissonRatio / (1 - input.poissonRatio));
-            matrixD.setElement(1, 1, 1);
-            matrixD.setElement(1, 2, input.poissonRatio / (1 - input.poissonRatio));
-            matrixD.setElement(2, 2, 1);
-            matrixD.setElement(3, 3, (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio));
-            matrixD.setElement(4, 4, (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio));
-            matrixD.setElement(4, 5, (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio));
+            matrixD[0, 0] = 1;
+            matrixD[0, 1] = input.poissonRatio / (1 - input.poissonRatio);
+            matrixD[0, 2] = input.poissonRatio / (1 - input.poissonRatio);
+            matrixD[1, 1] = 1;
+            matrixD[1, 2] = input.poissonRatio / (1 - input.poissonRatio);
+            matrixD[2, 2] = 1;
+            matrixD[3, 3] = (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio);
+            matrixD[4, 4] = (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio);
+            matrixD[4, 5] = (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio);
+
+            matrixD = matrixD * (input.elasticityModulus * (1 - input.poissonRatio) / ((1 + input.poissonRatio) * (1 - 2 * input.poissonRatio)));
 
 
             foreach (var element in elementsMap.elements)

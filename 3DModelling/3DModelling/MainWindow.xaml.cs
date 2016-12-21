@@ -244,16 +244,16 @@ namespace _3DModelling
             Hy = 2;
             Hz = 2;
 
-            Nx = 1;
-            Ny = 1;
+            Nx = 10;
+            Ny = 10;
             Nz = 1;
            
 
             rebuildGrid();
 
-            ElasticityModulus = 700;
-            PoissonRatio = 0.44;
-            Density = 7.8;
+            ElasticityModulus = 1000000;
+            PoissonRatio = 0.25;
+            Density = 4000;
 
             Iterations = 10;
             IterationsCount = 1;
@@ -396,6 +396,7 @@ namespace _3DModelling
             visibleIndeces = gridBuilder.GetVisibleIndeces();
             StateSlider.Value = 0;
             currentPointsState = initNodesState;
+            nodesPointsStates.Clear();
             nodesPointsStates.Add(initNodesState);
             DrawNewNet(currentPointsState);
             IsGridInitialized = true;
