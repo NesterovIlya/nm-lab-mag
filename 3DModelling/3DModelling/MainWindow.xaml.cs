@@ -1,7 +1,4 @@
-﻿using app.Utils;
-using app.ViewModel;
-using HelixToolkit.Wpf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,26 +10,25 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Media.Media3D;
+using HelixToolkit.Wpf;
 
-namespace app
+namespace _3DModelling
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly BaseViewModel _mainViewModel = new MainViewModel();
-
         List<int> visibleIndeces = new List<int>();
-        int Hx = 2;
-        int Hy = 2;
-        int Hz = 2;
+        int Hx = 3;
+        int Hy = 4;
+        int Hz = 5;
 
-        int Nx = 5;
-        int Ny = 5;
+        int Nx = 4;
+        int Ny = 8;
         int Nz = 5;
 
         Visualizer visualizer;
@@ -46,21 +42,26 @@ namespace app
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = _mainViewModel;
-            this.DrawNewNet();
+            DrawNewNet();
+            
         }
+
 
         private void DrawNewNet()
         {
-            grid.Children.Clear();
-            points.Children.Clear();
-            bool onlyVisible = false;
+            cube.Children.Clear();
+            bool onlyVisible = true;
             ZLines = new LinesVisual3D();
             YLines = new LinesVisual3D();
             YLines = new LinesVisual3D();
 
             visualizer = new Visualizer(Hx, Hy, Hz, Nx, Ny, Nz);
 
+
+            if (ShowInvisible.IsChecked==true)
+            {
+                onlyVisible = false;
+            }
 
             nodesModels = visualizer.GetNodesModels(onlyVisible);
 
@@ -78,12 +79,12 @@ namespace app
 
             foreach (var nodeModel in nodesModels)
             {
-                points.Children.Add(nodeModel);
+                cube.Children.Add(nodeModel);
             }
 
-            grid.Children.Add(ZLines);
-            grid.Children.Add(YLines);
-            grid.Children.Add(XLines);
+            cube.Children.Add(ZLines);
+            cube.Children.Add(YLines);
+            cube.Children.Add(XLines);
         }
 
 
@@ -97,7 +98,16 @@ namespace app
                     ((SphereVisual3D)(viewport.FindNearestVisual(currentPoint))).Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
                 }
             }
-
+            
         }
+
+        private void ShowNodes_Checked(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+
+
+
     }
 }
