@@ -36,7 +36,7 @@ namespace app.core
                 IList<Vector3D> rightSide = new List<Vector3D>();
                 foreach (double proportionCoef in elementsRegistry.nodeProportions)
                 {
-                    rightSide.Add(new Vector3D(0, 0, proportionCoef * weightCoef));
+                    rightSide.Add(new Vector3D(0, 0, -proportionCoef * weightCoef));
                 }
 
                 // Формируем обобщенную матрицу

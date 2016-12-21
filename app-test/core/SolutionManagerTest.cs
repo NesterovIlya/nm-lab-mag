@@ -378,11 +378,11 @@ namespace app_test.core
         {
             SolutionManager solutionManager = new SolutionManager();
             //int[] boundaryConditions = new int[2] { 24, 25 };
-            int[] boundaryConditions = new int[5] { 0, 2, 4, 6, 8 };
+            int[] boundaryConditions = new int[4] { 0, 2, 4, 6};
             //int[] boundaryConditions = new int[0];
             InputData inputData = new InputData(
                 1, 1, 1,
-                4, 4, 1,
+                1, 1, 1,
                 200, 0.28, 7.8, //сталь
                 1,
                 boundaryConditions
