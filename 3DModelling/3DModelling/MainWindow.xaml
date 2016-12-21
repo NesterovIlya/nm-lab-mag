@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:_3DModelling"
           xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="525">
+        Title="Салфетка" Height="450" Width="525">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -18,38 +18,141 @@
 
         <Label Grid.Row="0"
 				HorizontalAlignment="Center" 
-				FontSize="20" 
-				Foreground="Red" 
-				Content="Model: Cube"
+				FontSize="25" 
+				Foreground="Purple" 
+				Content="Задача ''Салфетка''"
             />
-        <StackPanel Grid.Row="1" Height="Auto" VerticalAlignment="Top"  Margin="5,5,5,5">
-            <CheckBox Name="ShowNodes" Content="Отображать узлы" FontSize="20" Checked="ShowNodes_Checked" IsChecked="True" >
-                <CheckBox.Foreground>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
-                </CheckBox.Foreground>
-            </CheckBox>
-            <CheckBox Name="ShowRibs" Content="Отображать ребра" FontSize="20" IsChecked="True">
-                <CheckBox.Foreground>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
-                </CheckBox.Foreground>
-            </CheckBox>
-            <CheckBox Name="ShowInvisible" Content="Отображать скрытые элементы" FontSize="20"
+        <StackPanel Grid.Row="1"  Height="Auto" VerticalAlignment="Top"  Margin="5,5,5,5" Orientation="Horizontal">
+            <StackPanel Width="Auto" HorizontalAlignment="Stretch">
+                <Label Content="Режимы отображения сетки" FontSize="20" Foreground="Purple"/>
+                <CheckBox Name="ShowNodes" Content="Отображать узлы" FontSize="15" Checked="ShowNodes_Checked" IsChecked="True" Unchecked="ShowNodes_Unchecked" >
+                    <CheckBox.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                    </CheckBox.Foreground>
+                </CheckBox>
+                <CheckBox Name="ShowRibs" Content="Отображать ребра" FontSize="15" IsChecked="True" Checked="ShowRibs_Checked" Unchecked="ShowRibs_Unchecked">
+                    <CheckBox.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                    </CheckBox.Foreground>
+                </CheckBox>
+                <CheckBox Name="ShowInvisible" Content="Отображать скрытые элементы" FontSize="15" Checked="ShowInvisible_Checked" Unchecked="ShowInvisible_Unchecked"
                       >
-                <CheckBox.Foreground>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
-                </CheckBox.Foreground>
-            </CheckBox>
+                    <CheckBox.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                    </CheckBox.Foreground>
+                </CheckBox>
+                <Button Name="Execute" Margin="0,15,0,0" Content="Построить решение" Click="Execute_Click" FontSize="25" Background="White" Foreground="Purple" BorderThickness="2" BorderBrush="Purple" />
+            </StackPanel>
+            <StackPanel Width="Auto" Margin="40,0,5,0" HorizontalAlignment="Stretch">
+                <Label Content="Входные параметры" FontSize="20" Foreground="Purple"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Hx = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Name="HxTB" Width="Auto"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Hy = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Name="HyTB" Width="Auto"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Hz = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Name="HzTB" Width="Auto"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Nx = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Name="NxTB" Width="Auto"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Ny = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Name="NyTB" Width="Auto"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Nz = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Name="NzTB" Width="Auto"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Nt = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Name="NtTB" Width="Auto"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="E = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Name="ElasticityModulusTB" Width="Auto"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="ν = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Name="PoissonRatioTB" Width="Auto"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="ρ = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Name="DensityTB" Width="Auto"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                
+            </StackPanel>
+
+
         </StackPanel>
-        <Slider Height="25" Minimum="0" Maximum="360"
-                Value="{Binding ElementName=rotate, Path= Angle}" Grid.Row="2"/>
+
+        <Slider Name ="StateSlider" Height="25" Grid.Row="2" ValueChanged="StateSlider_ValueChanged"/>
         <HelixToolkit:HelixViewport3D x:Name="viewport"  DataContext="Child"  ZoomExtentsWhenLoaded="True" ShowCoordinateSystem="True"   InfiniteSpin="True" MouseDown="viewport_MouseDown" Grid.Row="3" Height="Auto" >
             <!-- Using the SunLight. Strange thing is: If I use the DefaultLight my Performance gets really bad -->
             <HelixToolkit:SunLight Brightness="1" >
             </HelixToolkit:SunLight>
             <!-- This ModelVisual3D Object should contain my LED cube -->
-            <ModelVisual3D x:Name="cube">
-                
-            </ModelVisual3D>
+            <ModelVisual3D x:Name="grid"/>
+            <ModelVisual3D x:Name="points"/>
+
         </HelixToolkit:HelixViewport3D>
 
 
