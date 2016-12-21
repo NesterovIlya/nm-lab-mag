@@ -150,7 +150,7 @@ namespace app.core
             {
                 for (int j = 0; j < a.ColumnsCount; j++)
                 {
-                    result[i, j] = a[j, i] * b;
+                    result[i, j] = a[i, j] * b;
                 }
             }
             return result;

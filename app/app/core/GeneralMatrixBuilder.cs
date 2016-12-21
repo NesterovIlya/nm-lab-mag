@@ -21,13 +21,16 @@ namespace app.core
             Matrix matrixD = new Matrix(6, 6);
             matrixD[0, 0] = 1;
             matrixD[0, 1] = input.poissonRatio / (1 - input.poissonRatio);
+            matrixD[1, 0] = matrixD[0, 1];
             matrixD[0, 2] = input.poissonRatio / (1 - input.poissonRatio);
+            matrixD[2, 0] = matrixD[0, 2];
             matrixD[1, 1] = 1;
             matrixD[1, 2] = input.poissonRatio / (1 - input.poissonRatio);
+            matrixD[2, 1] = matrixD[1, 2];
             matrixD[2, 2] = 1;
-            matrixD[3, 3] = (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio);
-            matrixD[4, 4] = (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio);
-            matrixD[4, 5] = (1 - 2 * input.poissonRatio) / 2 * (1 - input.poissonRatio);
+            matrixD[3, 3] = (1 - 2 * input.poissonRatio) / (2 * (1 - input.poissonRatio));
+            matrixD[4, 4] = (1 - 2 * input.poissonRatio) / (2 * (1 - input.poissonRatio));
+            matrixD[5, 5] = (1 - 2 * input.poissonRatio) / (2 * (1 - input.poissonRatio));
 
             matrixD = matrixD * (input.elasticityModulus * (1 - input.poissonRatio) / ((1 + input.poissonRatio) * (1 - 2 * input.poissonRatio)));
 
@@ -42,7 +45,7 @@ namespace app.core
 
         private void createMatrKE(Element element, SymmetricMatrix<MatrixDimension3> matr, Matrix matrixD)
         {
-            double v = 1/(36 * element.volume * element.volume);
+            double v = 1/(36 * element.volume);
             for(int r = 0; r < 4; r++)
             {
                 for(int s = r; s < 4; s++)
@@ -90,6 +93,14 @@ namespace app.core
 
         private Matrix createMatrB(Node node)
         {
+            /*
+             *   b_i  0   0
+             *    0  c_i  0
+             *    0   0  d_i
+             *   c_i b_i  0
+             *    0  d_i c_i
+             *   d_i  0  b_i
+             */
             Matrix matrix = new Matrix(6, 3);
             matrix[0, 0] = node.coefB;
             matrix[1, 1] = node.coefC;
@@ -100,6 +111,7 @@ namespace app.core
             matrix[4, 2] = node.coefC;
             matrix[5, 0] = node.coefD;
             matrix[5, 2] = node.coefB;
+           
 
             return matrix;
         }

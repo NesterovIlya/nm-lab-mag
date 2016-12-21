@@ -31,7 +31,7 @@ namespace _3DModelling
 
 
         private IList<int> visibleIndeces = new List<int>();
-        private IList<int> fixedIndeces  = new List<int>();
+        private IList<int> fixedIndeces = new List<int>();
         private IList<Point3D> initNodesState = new List<Point3D>();
 
         private IList<Point3D> currentPointsState = new List<Point3D>();
@@ -231,7 +231,7 @@ namespace _3DModelling
 
         GridBuilder gridBuilder;
 
-        
+
 
         public MainWindow()
         {
@@ -244,18 +244,18 @@ namespace _3DModelling
             Hy = 2;
             Hz = 2;
 
-            Nx = 10;
-            Ny = 10;
+            Nx = 1;
+            Ny = 2;
             Nz = 1;
-           
+
 
             rebuildGrid();
 
-            ElasticityModulus = 1000000;
-            PoissonRatio = 0.25;
-            Density = 4000;
+            ElasticityModulus = 100000;
+            PoissonRatio = 0.44;
+            Density = 7800;
 
-            Iterations = 10;
+            Iterations = 1;
             IterationsCount = 1;
 
             IsSolutionBuilt = false;
@@ -270,9 +270,9 @@ namespace _3DModelling
 
             outerLines = new LinesVisual3D();
             innerLines = new LinesVisual3D();
-            
 
-            visualizer = new Visualizer(Nx+1, Ny+1, Nz+1, currentPointsState, visibleIndeces, fixedIndeces, ShowHidden);
+
+            visualizer = new Visualizer(Nx + 1, Ny + 1, Nz + 1, currentPointsState, visibleIndeces, fixedIndeces, ShowHidden);
 
             nodesModels = visualizer.GetNodesModels();
 
@@ -311,7 +311,7 @@ namespace _3DModelling
         {
             Point currentPoint = e.GetPosition(viewport);
             if (viewport.FindNearestVisual(currentPoint) != null)
-            {               
+            {
                 if (viewport.FindNearestVisual(currentPoint).GetType() == typeof(SphereVisual3D))
                 {
                     SphereVisual3D nearestSphere = (SphereVisual3D)(viewport.FindNearestVisual(currentPoint));
@@ -333,9 +333,9 @@ namespace _3DModelling
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
             InputData input = new InputData(
-                Hx, Hy, Hz, 
-                Nx, Ny, Nz, 
-                ElasticityModulus, PoissonRatio, Density, 
+                Hx, Hy, Hz,
+                Nx, Ny, Nz,
+                ElasticityModulus, PoissonRatio, Density,
                 Iterations, fixedIndeces.ToArray()
            );
 
@@ -348,16 +348,16 @@ namespace _3DModelling
             for (int iterationId = 1; iterationId <= shifts.Count; iterationId++)
             {
                 IList<Point3D> newNodesPoints = new List<Point3D>();
-                for (int pointId=0; pointId < initNodesState.Count; pointId++)
+                for (int pointId = 0; pointId < initNodesState.Count; pointId++)
                 {
                     if (!fixedIndeces.Contains(pointId))
                     {
-                        newNodesPoints.Add(Vector3D.Add(shifts[iterationId-1][pointId], nodesPointsStates[iterationId-1][pointId]));
+                        newNodesPoints.Add(Vector3D.Add(shifts[iterationId - 1][pointId], nodesPointsStates[iterationId - 1][pointId]));
                     }
                     else
                     {
                         newNodesPoints.Add(nodesPointsStates[0][pointId]);
-                    }                     
+                    }
                 }
                 nodesPointsStates.Add(newNodesPoints);
             }
@@ -398,6 +398,9 @@ namespace _3DModelling
             currentPointsState = initNodesState;
             nodesPointsStates.Clear();
             nodesPointsStates.Add(initNodesState);
+
+            fixedIndeces.Clear();
+
             DrawNewNet(currentPointsState);
             IsGridInitialized = true;
         }
@@ -414,7 +417,7 @@ namespace _3DModelling
         }
 
         private void ChangeRibsState()
-        {            
+        {
             if (grid != null)
             {
                 foreach (var ribs in grid.Children)
@@ -427,7 +430,7 @@ namespace _3DModelling
 
         private void StateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (nodesPointsStates.Count == 0)
+            if (!IsGridInitialized || nodesPointsStates.Count == 0)
             {
                 return;
             }
