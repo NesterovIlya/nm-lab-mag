@@ -26,12 +26,13 @@ namespace app.core
             // Накапливаемые перемещения узлов
             IList<Vector3D> transitions = new List<Vector3D>();
 
+            // Формируем реестр элементов
+            ElementsMap elementsRegistry = new ElementsMap(inputData);
+
             for (int iterIndex = 0; iterIndex < inputData.iterationsCount; iterIndex++)
             {
                 weightCoef += 1 / (double)inputData.iterationsCount;
-                // Формируем реестр элементов
-                ElementsMap elementsRegistry = new ElementsMap(inputData);
-
+                
                 // Генерируем правую часть
                 IList<Vector3D> rightSide = new List<Vector3D>();
                 foreach (double proportionCoef in elementsRegistry.nodeProportions)

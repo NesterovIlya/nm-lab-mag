@@ -15,87 +15,255 @@ using System.Windows.Shapes;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
 using app.core;
-
+using System.ComponentModel;
 
 namespace _3DModelling
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        SolutionManager solutionManager = new SolutionManager();
 
-        
+        private readonly Dictionary<string, PropertyChangedEventArgs> eventArgsCache;
 
-        List<int> visibleIndeces = new List<int>();
-        List<int> fixedIndeces  = new List<int>();
-        List<Point3D> initNodesState = new List<Point3D>();
-
-        List<Point3D> currentPointsState = new List<Point3D>();
-
-        List<List<Point3D>> nodesPointsStates = new List<List<Point3D>>();
-
-        List<List<Vector3D>> shifts = new List<List<Vector3D>>();
-
-        int Hx = 3;
-        int Hy = 4;
-        int Hz = 5;
-
-        int Nx = 5;
-        int Ny = 4;
-        int Nz = 3;
-
-        int iterations = 5;
+        private SolutionManager solutionManager = new SolutionManager();
 
 
-        bool showNodes = true;
-        bool showRibs = true;
-        bool showHidden = false;
+        private IList<int> visibleIndeces = new List<int>();
+        private IList<int> fixedIndeces  = new List<int>();
+        private IList<Point3D> initNodesState = new List<Point3D>();
+
+        private IList<Point3D> currentPointsState = new List<Point3D>();
+
+        private IList<IList<Point3D>> nodesPointsStates = new List<IList<Point3D>>();
+        private int currentStateIndex = 0;
+
+        private IList<IList<Vector3D>> shifts = new List<IList<Vector3D>>();
+
+
+        private int _hx;
+        public int Hx
+        {
+            get
+            {
+                return this._hx;
+            }
+            set
+            {
+                this._hx = value;
+                OnPropertyChanged("Hx");
+                IsGridInitialized = false;
+            }
+        }
+
+        private int _hy;
+        public int Hy
+        {
+            get
+            {
+                return this._hy;
+            }
+            set
+            {
+                this._hy = value;
+                OnPropertyChanged("Hy");
+                IsGridInitialized = false;
+            }
+        }
+
+        private int _hz;
+        public int Hz
+        {
+            get
+            {
+                return this._hz;
+            }
+            set
+            {
+                this._hz = value;
+                OnPropertyChanged("Hz");
+                IsGridInitialized = false;
+            }
+        }
+
+        private int _nx;
+        public int Nx
+        {
+            get
+            {
+                return this._nx;
+            }
+            set
+            {
+                this._nx = value;
+                OnPropertyChanged("Nx");
+                IsGridInitialized = false;
+            }
+        }
+
+        private int _ny;
+        public int Ny
+        {
+            get
+            {
+                return this._ny;
+            }
+            set
+            {
+                this._ny = value;
+                OnPropertyChanged("Ny");
+                IsGridInitialized = false;
+            }
+        }
+
+        private int _nz;
+        public int Nz
+        {
+            get
+            {
+                return this._nz;
+            }
+            set
+            {
+                this._nz = value;
+                OnPropertyChanged("Nz");
+                IsGridInitialized = false;
+            }
+        }
+
+        public double ElasticityModulus { get; set; }
+        public double PoissonRatio { get; set; }
+        public double Density { get; set; }
+
+        //для слайдера
+        private int _iterationsCount;
+        public int IterationsCount
+        {
+            get
+            {
+                return this._iterationsCount;
+            }
+            set
+            {
+                this._iterationsCount = value;
+                OnPropertyChanged("IterationsCount");
+            }
+        }
+        // для текстового поля
+        public int Iterations { get; set; }
+
+        private bool _showNodes = true;
+        public bool ShowNodes
+        {
+            get
+            {
+                return this._showNodes;
+            }
+            set
+            {
+                this._showNodes = value;
+                ChangeNodesState();
+            }
+        }
+        private bool _showRibs = true;
+        public bool ShowRibs
+        {
+            get
+            {
+                return this._showRibs;
+            }
+            set
+            {
+                this._showRibs = value;
+                ChangeRibsState();
+            }
+        }
+
+        private bool _showHidden = false;
+        public bool ShowHidden
+        {
+            get
+            {
+                return this._showHidden;
+            }
+            set
+            {
+                this._showHidden = value;
+                DrawNewNet(currentPointsState);
+            }
+        }
+
+        private bool _isGridInitialized = false;
+        public bool IsGridInitialized
+        {
+            get
+            {
+                return this._isGridInitialized;
+            }
+            set
+            {
+                this._isGridInitialized = value;
+                OnPropertyChanged("IsGridInitialized");
+            }
+        }
+
+        private bool _isSolutionBuilt = false;
+        public bool IsSolutionBuilt
+        {
+            get
+            {
+                return this._isSolutionBuilt;
+            }
+            set
+            {
+                this._isSolutionBuilt = value;
+                OnPropertyChanged("IsSolutionBuilt");
+            }
+        }
 
         Visualizer visualizer;
 
         LinesVisual3D outerLines;
         LinesVisual3D innerLines;
 
-        List<SphereVisual3D> nodesModels;
+        IList<SphereVisual3D> nodesModels;
 
         GridBuilder gridBuilder;
+
+        
 
         public MainWindow()
         {
             InitializeComponent();
-            gridBuilder = new GridBuilder(Hx, Hy, Hz, Nx, Ny, Nz);
+            DataContext = this;
 
-            
-            initNodesState = gridBuilder.GetNodesPoints();
-            Random rand = new Random();
-            for (int iterationId = 0; iterationId < iterations; iterationId++)
-            {
-                List<Vector3D> iterationShifts = new List<Vector3D>();
-                for (int pointId = 0; pointId < initNodesState.Count; pointId++)
-                {
-                   
+            eventArgsCache = new Dictionary<string, PropertyChangedEventArgs>();
 
-                    iterationShifts.Add(new Vector3D(rand.Next(-10, 10), rand.Next(-10, 10), rand.Next(-10, 10)));
-                }
-                shifts.Add(iterationShifts);
-            }
+            Hx = 2;
+            Hy = 2;
+            Hz = 2;
 
-            visibleIndeces = gridBuilder.GetVisibleIndeces();
-            StateSlider.Minimum = 0;
-            StateSlider.Maximum = iterations - 1;
-            StateSlider.Value = 0;
-            StateSlider.TickFrequency = 1;
-            StateSlider.TickPlacement = System.Windows.Controls.Primitives.TickPlacement.BottomRight;
-            currentPointsState = initNodesState;
-            nodesPointsStates.Add(initNodesState);
-            DrawNewNet(currentPointsState);
+            Nx = 1;
+            Ny = 1;
+            Nz = 1;
+           
+
+            rebuildGrid();
+
+            ElasticityModulus = 700;
+            PoissonRatio = 0.44;
+            Density = 7.8;
+
+            Iterations = 10;
+            IterationsCount = 1;
+
+            IsSolutionBuilt = false;
+            IsGridInitialized = true;
+
         }
-                     
 
-
-        private void DrawNewNet(List<Point3D> currentPointsState)
+        private void DrawNewNet(IList<Point3D> currentPointsState)
         {
             points.Children.Clear();
             grid.Children.Clear();
@@ -104,7 +272,7 @@ namespace _3DModelling
             innerLines = new LinesVisual3D();
             
 
-            visualizer = new Visualizer(Nx, Ny, Nz, currentPointsState, visibleIndeces, fixedIndeces, showHidden);
+            visualizer = new Visualizer(Nx+1, Ny+1, Nz+1, currentPointsState, visibleIndeces, fixedIndeces, ShowHidden);
 
             nodesModels = visualizer.GetNodesModels();
 
@@ -126,9 +294,9 @@ namespace _3DModelling
            */
 
 
-            ChangeRibsState(showRibs);
+            ChangeRibsState();
 
-            ChangeNodesState(showNodes);
+            ChangeNodesState();
 
             foreach (var nodeModel in nodesModels)
             {
@@ -138,8 +306,6 @@ namespace _3DModelling
             grid.Children.Add(outerLines);
             grid.Children.Add(innerLines);
         }
-
-       
 
         private void viewport_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -164,60 +330,29 @@ namespace _3DModelling
             }
         }
 
-        private void ShowNodes_Checked(object sender, RoutedEventArgs e)
-        {
-            showNodes = true;
-            ChangeNodesState(showNodes);
-        }
-
-        private void ShowNodes_Unchecked(object sender, RoutedEventArgs e)
-        {
-            showNodes = false;
-            ChangeNodesState(showNodes);
-        }
-        
-
-        private void ShowRibs_Checked(object sender, RoutedEventArgs e)
-        {
-            showRibs = true;
-            ChangeRibsState(showRibs);
-        }
-
-        private void ShowRibs_Unchecked(object sender, RoutedEventArgs e)
-        {
-            showRibs = false;
-            ChangeRibsState(showRibs);
-        }
-
-        private void ShowInvisible_Checked(object sender, RoutedEventArgs e)
-        {
-            showHidden = true;
-            DrawNewNet(currentPointsState);
-        }
-
-        private void ShowInvisible_Unchecked(object sender, RoutedEventArgs e)
-        {
-            showHidden = false;
-            DrawNewNet(currentPointsState);
-        }
-
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
-            InputData input = new InputData(Hx,Hy,Hz, Nx-1, Ny-1, Nz-1, 1,1,1,iterations, fixedIndeces.ToArray());
+            InputData input = new InputData(
+                Hx, Hy, Hz, 
+                Nx, Ny, Nz, 
+                ElasticityModulus, PoissonRatio, Density, 
+                Iterations, fixedIndeces.ToArray()
+           );
 
             SolutionManager solutionManager = new SolutionManager();
-            //shifts = solutionManager.buildSolution(input);
+            shifts = solutionManager.buildSolution(input);
+            IList<Point3D> firstState = nodesPointsStates[0];
+            nodesPointsStates.Clear();
+            nodesPointsStates.Add(firstState);
 
-
-            
-            for (int iterationId = 1; iterationId<shifts.Count+1; iterationId++)
+            for (int iterationId = 1; iterationId <= shifts.Count; iterationId++)
             {
-                List<Point3D> newNodesPoints = new List<Point3D>();
+                IList<Point3D> newNodesPoints = new List<Point3D>();
                 for (int pointId=0; pointId < initNodesState.Count; pointId++)
                 {
                     if (!fixedIndeces.Contains(pointId))
                     {
-                        newNodesPoints.Add(Vector3D.Add(shifts[iterationId-1][pointId], nodesPointsStates[iterationId - 1][pointId]));
+                        newNodesPoints.Add(Vector3D.Add(shifts[iterationId-1][pointId], nodesPointsStates[iterationId-1][pointId]));
                     }
                     else
                     {
@@ -225,41 +360,108 @@ namespace _3DModelling
                     }                     
                 }
                 nodesPointsStates.Add(newNodesPoints);
-                //currentPointsState = nodesPointsStates[iterationId];
-                //StateSlider.Value = shiftId;
-
-                //DrawNewNet(currentPointsState);
             }
+
+            currentPointsState = nodesPointsStates[0];
+            StateSlider.Value = 0;
+
+            DrawNewNet(currentPointsState);
+            IterationsCount = Iterations;
+            IsSolutionBuilt = true;
         }
 
-        private void ChangeNodesState(bool visible)
+        private void RebuildGrid_Click(object sender, RoutedEventArgs e)
+        {
+            rebuildGrid();
+        }
+
+        private void rebuildGrid()
+        {
+            gridBuilder = new GridBuilder(Hx, Hy, Hz, Nx + 1, Ny + 1, Nz + 1);
+
+            initNodesState = gridBuilder.GetNodesPoints();
+            /*Random rand = new Random();
+            for (int iterationId = 0; iterationId < Iterations; iterationId++)
+            {
+                List<Vector3D> iterationShifts = new List<Vector3D>();
+                for (int pointId = 0; pointId < initNodesState.Count; pointId++)
+                {
+
+
+                    iterationShifts.Add(new Vector3D(rand.Next(-10, 10), rand.Next(-10, 10), rand.Next(-10, 10)));
+                }
+                shifts.Add(iterationShifts);
+            }*/
+
+            visibleIndeces = gridBuilder.GetVisibleIndeces();
+            StateSlider.Value = 0;
+            currentPointsState = initNodesState;
+            nodesPointsStates.Add(initNodesState);
+            DrawNewNet(currentPointsState);
+            IsGridInitialized = true;
+        }
+
+        private void ChangeNodesState()
         {
             if (points != null)
             {
                 foreach (var point in points.Children)
                 {
-                    ((SphereVisual3D)point).Visible = visible;
+                    ((SphereVisual3D)point).Visible = this.ShowNodes;
                 }
             }
         }
 
-        private void ChangeRibsState(bool visible)
+        private void ChangeRibsState()
         {            
             if (grid != null)
             {
                 foreach (var ribs in grid.Children)
                 {
 
-                    ((LinesVisual3D)ribs).Thickness = Convert.ToInt32(visible);
+                    ((LinesVisual3D)ribs).Thickness = Convert.ToInt32(this.ShowRibs);
                 }
             }
         }
 
         private void StateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            int stateIndex;
-            stateIndex = Convert.ToInt32(((Slider)sender).Value);
-            DrawNewNet(nodesPointsStates[stateIndex]);            
+            if (nodesPointsStates.Count == 0)
+            {
+                return;
+            }
+            int stateIndex = Convert.ToInt32(((Slider)sender).Value);
+            if (currentStateIndex != stateIndex)
+            {
+                currentStateIndex = stateIndex;
+                DrawNewNet(nodesPointsStates[stateIndex]);
+            }
+                        
         }
+
+        #region Implementation of INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventArgs args;
+            if (!eventArgsCache.TryGetValue(propertyName, out args))
+            {
+                args = new PropertyChangedEventArgs(propertyName);
+                eventArgsCache.Add(propertyName, args);
+            }
+
+            OnPropertyChanged(args);
+        }
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, args);
+        }
+
+        #endregion
     }
 }

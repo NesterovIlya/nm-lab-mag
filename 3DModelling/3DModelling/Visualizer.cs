@@ -24,9 +24,9 @@ namespace _3DModelling
         private int Nz;
         private bool ShowHidden;
 
-        List<int> visibleIndeces = new List<int>();
-        List<int> fixedIndeces = new List<int>();
-        private List<Point3D> nodesPoints = new List<Point3D>();
+        IList<int> visibleIndeces = new List<int>();
+        IList<int> fixedIndeces = new List<int>();
+        private IList<Point3D> nodesPoints = new List<Point3D>();
 
         LinesVisual3D outerXParallels = new LinesVisual3D();
         LinesVisual3D outerYParallels = new LinesVisual3D();
@@ -37,7 +37,7 @@ namespace _3DModelling
         LinesVisual3D innerZParallels = new LinesVisual3D();
         LinesVisual3D innerParallels = new LinesVisual3D();
 
-        public Visualizer(int Nx, int Ny, int Nz, List<Point3D> nodesPoints,List<int> visibleIndeces, List<int> fixedIndeces, bool showHidden)
+        public Visualizer(int Nx, int Ny, int Nz, IList<Point3D> nodesPoints,IList<int> visibleIndeces, IList<int> fixedIndeces, bool showHidden)
         {
 
             
@@ -51,9 +51,9 @@ namespace _3DModelling
         }
 
 
-        public List<SphereVisual3D> GetNodesModels()
+        public IList<SphereVisual3D> GetNodesModels()
         {
-            List<SphereVisual3D> nodesModels = new List<SphereVisual3D>();
+            IList<SphereVisual3D> nodesModels = new List<SphereVisual3D>();
 
             for (int i = 0; i < nodesPoints.Count; i++)
             {
@@ -95,7 +95,7 @@ namespace _3DModelling
             return nodesModels;
         }
 
-        public List<Point3D> GetNodesPoints()
+        public IList<Point3D> GetNodesPoints()
         {           
             return nodesPoints;
         }
