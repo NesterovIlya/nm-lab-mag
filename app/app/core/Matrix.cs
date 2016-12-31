@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace app.core
 {
@@ -152,6 +153,23 @@ namespace app.core
                 {
                     result[i, j] = a[i, j] * b;
                 }
+            }
+            return result;
+        }
+
+        //TODO удалить после тестирования
+        public IList<double> SumByRow()
+        {
+            IList<double> result = new List<double>();
+
+            for (int rowInd = 0; rowInd < RowsCount; rowInd++)
+            {
+                double sum = 0;
+                for (int colInd = 0; colInd < ColumnsCount; colInd++)
+                {
+                    sum += this[rowInd, colInd];
+                }
+                result.Add(sum);
             }
             return result;
         }

@@ -36,7 +36,6 @@ namespace app.core
 
             this.nodeProportions = new double[(input.Nx + 1) * (input.Ny + 1) * (input.Nz + 1)];
 
-            int sh = 0;
             for (int ix = 0; ix < input.Nx; ix++)
             {
                 for (int iy = 0; iy < input.Ny; iy++)
@@ -153,8 +152,6 @@ namespace app.core
                             elements.Add(elem);
 
                         }
-
-                        sh++;
                     }
                 }
 
@@ -173,24 +170,21 @@ namespace app.core
             {
                 this.nodeProportions[nodeNum] = currentCoef;
             }
-            else if (!this.nodeProportions[nodeNum].Equals(currentCoef))
+            /*else if (!this.nodeProportions[nodeNum].Equals(currentCoef))
             {
                 throw new ArithmeticException("Error occurred while filling proportion coefficient for node " + nodeNum + 
                     ". Existed coef " + this.nodeProportions[nodeNum] + " is not equal to computed " +  currentCoef + " for current element.");
+            }*/ else
+            {
+                this.nodeProportions[nodeNum] += currentCoef;
             }
         }
 
         private Node createNode(int pointIndex, Point3D[] points, int[] pointNumbers) 
         {
-            /*Vector3D transition = new Vector3D(0, 0, 0);
-            if (transitions != null && transitions.Count > 0)
-            {
-                transition = transitions[pointNumbers[pointIndex]];
-            }*/
-
             return new Node(
                 pointNumbers[pointIndex], 
-                new Point3D(points[pointIndex].X, points[pointIndex].Y, points[pointIndex].Z)// + transition
+                new Point3D(points[pointIndex].X, points[pointIndex].Y, points[pointIndex].Z)
             );
         }
     }

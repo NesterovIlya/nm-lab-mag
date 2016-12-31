@@ -203,6 +203,54 @@ namespace app.core
             return base.GetHashCode();
         }
 
+        //TODO удалить после тестирования
+        public static Matrix ToMatrix(SymmetricMatrix<MatrixDimension3> source)
+        {
+            Matrix result = new Matrix(source.Dimension * 3, source.Dimension * 3);
+
+            SymmetricMatrix<DoubleContainerElement> extractedSource = extractMatrix(source);
+
+            for (int rowInd = 0; rowInd < extractedSource.Dimension; rowInd++)
+            {
+                for (int colInd = rowInd; colInd < extractedSource.getBandWidth(); colInd++)
+                {
+                    result[rowInd, colInd] = extractedSource[rowInd, colInd].element;
+                    if (colInd != rowInd)
+                    {
+                        result[colInd, rowInd] = extractedSource[rowInd, colInd].element;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        //TODO удалить после тестирования, взято из CholeskySolver
+        private static SymmetricMatrix<DoubleContainerElement> extractMatrix(SymmetricMatrix<MatrixDimension3> sourceMatrix)
+        {
+            int dimension = 3 * sourceMatrix.Dimension;
+            SymmetricMatrix<DoubleContainerElement> result = new SymmetricMatrix<DoubleContainerElement>(dimension, new DoubleContainerElement());
+
+            for (int sourceRowInd = 0; sourceRowInd < sourceMatrix.Dimension; sourceRowInd++)
+            {
+                int rightBound = sourceRowInd + sourceMatrix.getBandWidth() < sourceMatrix.Dimension ? sourceRowInd + sourceMatrix.getBandWidth() : sourceMatrix.Dimension;
+                for (int sourceColInd = sourceRowInd; sourceColInd < rightBound; sourceColInd++)
+                {
+                    // Обрабатываем соответствующий блок
+                    MatrixDimension3 block = sourceMatrix[sourceRowInd, sourceColInd];
+
+                    for (int blockRowInd = 0; blockRowInd < 3; blockRowInd++)
+                    {
+                        for (int blockColInd = sourceRowInd == sourceColInd ? blockRowInd : 0; blockColInd < 3; blockColInd++)
+                        {
+                            result[sourceRowInd * 3 + blockRowInd, sourceColInd * 3 + blockColInd] = new DoubleContainerElement(block[blockRowInd, blockColInd]);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
 
     }
 }

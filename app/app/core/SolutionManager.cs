@@ -23,8 +23,8 @@ namespace app.core
             // Весовой коэффициент (для итеративного процесса)
             double weightCoef = 0; 
 
-            // Накапливаемые перемещения узлов
-            IList<Vector3D> transitions = new List<Vector3D>();
+            // Последнее перемещения узлов
+            IList<Vector3D> lastTransition = new List<Vector3D>();
 
             // Формируем реестр элементов
             ElementsMap elementsRegistry = new ElementsMap(inputData);
@@ -35,6 +35,7 @@ namespace app.core
                 
                 // Генерируем правую часть
                 IList<Vector3D> rightSide = new List<Vector3D>();
+
                 foreach (double proportionCoef in elementsRegistry.nodeProportions)
                 {
                     rightSide.Add(new Vector3D(0, 0, -proportionCoef * weightCoef));
@@ -49,16 +50,17 @@ namespace app.core
                 // Решаем систему
                 IList<Vector3D> solution = _choleskySolver.solve(generalMatrix, rightSide);
 
-                if (transitions.Count > 0)
+                // Считаем перемещение на текущей итерации и добавляем в результат
+                if (lastTransition.Count > 0)
                 {
-                    if (transitions.Count != solution.Count)
+                    if (lastTransition.Count != solution.Count)
                     {
-                        throw new ArgumentException("Size of transitions and solution list must be the same!");
+                        throw new ArgumentException("Size of lastTransition and solution list must be the same!");
                     }
                     List<Vector3D> buffer = new List<Vector3D>();
-                    for (int nodeIndex = 0; nodeIndex < transitions.Count; nodeIndex++)
+                    for (int nodeIndex = 0; nodeIndex < lastTransition.Count; nodeIndex++)
                     {
-                        buffer.Add(solution[nodeIndex] - transitions[nodeIndex]);
+                        buffer.Add(solution[nodeIndex] - lastTransition[nodeIndex]);
                     }
                     solutions.Add(buffer);
                 } else
@@ -66,7 +68,7 @@ namespace app.core
                     solutions.Add(solution);
                 }
 
-                transitions = solution;
+                lastTransition = solution;
 
             }
 
@@ -94,20 +96,22 @@ namespace app.core
                 int leftBound = boundaryInd < globalMatrix.getBandWidth() ? 0 : boundaryInd - globalMatrix.getBandWidth() + 1;
                 int rightBound = boundaryInd + globalMatrix.getBandWidth() < globalMatrix.Dimension ? boundaryInd + globalMatrix.getBandWidth() : globalMatrix.Dimension;
 
-                    for (int columnInd = leftBound; columnInd < rightBound; columnInd++)
-                    {
-                        if (!boundaryInd.Equals(columnInd))
-                            globalMatrix.setElement(boundaryInd, columnInd, neitralMatrix);
+                for (int columnInd = leftBound; columnInd < rightBound; columnInd++)
+                {
+                    if (!boundaryInd.Equals(columnInd))
+                        globalMatrix.setElement(boundaryInd, columnInd, neitralMatrix);
 
-                        globalMatrix[boundaryInd, boundaryInd][0, 1] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][0, 2] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][1, 2] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][1, 0] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][2, 0] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][2, 1] = 0;
+                }
 
-                        rightSide[boundaryInd] = defaultVector;
-                    }
+                globalMatrix[boundaryInd, boundaryInd][0, 1] = 0;
+                globalMatrix[boundaryInd, boundaryInd][0, 2] = 0;
+                globalMatrix[boundaryInd, boundaryInd][1, 2] = 0;
+                globalMatrix[boundaryInd, boundaryInd][1, 0] = 0;
+                globalMatrix[boundaryInd, boundaryInd][2, 0] = 0;
+                globalMatrix[boundaryInd, boundaryInd][2, 1] = 0;
+
+                rightSide[boundaryInd] = defaultVector;
+
             }
             
         }

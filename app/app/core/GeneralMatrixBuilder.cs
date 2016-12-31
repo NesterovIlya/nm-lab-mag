@@ -40,6 +40,8 @@ namespace app.core
                 createMatrKE(element, result, matrixD);
             }
 
+            var tempRes = SymmetricMatrix<MatrixDimension3>.ToMatrix(result);
+            var sumByRowTempRes = tempRes.SumByRow();
             return result;
         }
 
@@ -56,9 +58,11 @@ namespace app.core
                     Node sNode = getNodeByIndex(element, s);
                     Matrix matrBs = createMatrB(sNode);
 
-                    matr[rNode.id, sNode.id] = matr[rNode.id, sNode.id] + MatrixDimension3.getFromMatrix(matrBr * matrixD * matrBs) * v;
+
+                    var buf = MatrixDimension3.getFromMatrix(matrBr * matrixD * matrBs) * v;
+                    matr[rNode.id, sNode.id] = matr[rNode.id, sNode.id] + buf; //(rNode.id > sNode.id ? (MatrixDimension3) buf.getTransposed() : buf);                   
                 }
-            } 
+            }    
         }
 
         private Node getNodeByIndex(Element element, int index)
