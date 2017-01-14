@@ -88,7 +88,7 @@ namespace app_test.core
             SymmetricMatrix<DoubleContainerElement> BMatrix = new SymmetricMatrix<DoubleContainerElement>(2 * 3, new DoubleContainerElement());
             SymmetricMatrix<DoubleContainerElement> CMatrix = new SymmetricMatrix<DoubleContainerElement>(2 * 3, new DoubleContainerElement());
             
-            IList<Vector3D> solution = solver.solve(sourceMatrix, rightPart);
+            IList<Vector3D> solution = solver.solve(SymmetricMatrix<DoubleContainerElement>.extractMatrix(sourceMatrix), rightPart);
 
             //Ожидаемый результат
             List<Vector3D> expectVector = new List<Vector3D>();

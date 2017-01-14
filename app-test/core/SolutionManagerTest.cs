@@ -379,7 +379,7 @@ namespace app_test.core
             SolutionManager solutionManager = new SolutionManager();
             int[] boundaryConditions = new int[2] { 0, 2 };
             InputData inputData = new InputData(
-                2, 2, 2,
+                1, 1, 1,
                 1, 1, 1,
                 1, 0.25, 1,
                 1,

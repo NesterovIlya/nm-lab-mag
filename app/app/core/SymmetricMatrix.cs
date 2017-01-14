@@ -225,8 +225,27 @@ namespace app.core
             return result;
         }
 
+        //TODO удалить после тестирования,
+        public static SymmetricMatrix<DoubleContainerElement> fromMatrix(Matrix source)
+        {
+            SymmetricMatrix<DoubleContainerElement> result = new SymmetricMatrix<DoubleContainerElement>(source.RowsCount, new DoubleContainerElement());
+
+            for (int rowInd = 0; rowInd < source.RowsCount; rowInd++)
+            {
+                for (int colInd = rowInd; colInd < source.ColumnsCount; colInd++)
+                {
+                    if (source[rowInd, colInd] != 0)
+                    {
+                        result[rowInd, colInd] = new DoubleContainerElement(source[rowInd, colInd]);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         //TODO удалить после тестирования, взято из CholeskySolver
-        private static SymmetricMatrix<DoubleContainerElement> extractMatrix(SymmetricMatrix<MatrixDimension3> sourceMatrix)
+        public static SymmetricMatrix<DoubleContainerElement> extractMatrix(SymmetricMatrix<MatrixDimension3> sourceMatrix)
         {
             int dimension = 3 * sourceMatrix.Dimension;
             SymmetricMatrix<DoubleContainerElement> result = new SymmetricMatrix<DoubleContainerElement>(dimension, new DoubleContainerElement());

@@ -42,7 +42,8 @@ namespace app.core
                 }
 
                 // Формируем обобщенную матрицу
-                SymmetricMatrix<MatrixDimension3> generalMatrix = _generalMatrixBuilder.build(elementsRegistry);
+                //SymmetricMatrix<MatrixDimension3> generalMatrix = _generalMatrixBuilder.build(elementsRegistry);
+                SymmetricMatrix<DoubleContainerElement> generalMatrix = _generalMatrixBuilder.build(elementsRegistry);
 
                 // Применяем граничные условия
                 applyBoundaryConditions(generalMatrix, rightSide, inputData.boundaryConditions);
@@ -82,12 +83,13 @@ namespace app.core
          * rightSide - правая часть
          * boundaryConditions - массив номеров граничных узлов (нумерация начинается с 0!!!!!)
          */
-        private void applyBoundaryConditions(SymmetricMatrix<MatrixDimension3> globalMatrix, IList<Vector3D> rightSide, int[] boundaryConditions)
+        private void applyBoundaryConditions(SymmetricMatrix<DoubleContainerElement> globalMatrix, IList<Vector3D> rightSide, int[] boundaryConditions)
         {
             int dimension = globalMatrix.Dimension;
             int bandWidth = globalMatrix.getBandWidth();
             int boundaryCount = boundaryConditions.Length;
-            MatrixDimension3 neitralMatrix = new MatrixDimension3();
+            //MatrixDimension3 neitralMatrix = new MatrixDimension3();
+            DoubleContainerElement neitralMatrix = new DoubleContainerElement();
             Vector3D defaultVector = new Vector3D();
             
             for (int boundary = 0; boundary < boundaryCount; boundary++)
@@ -99,16 +101,24 @@ namespace app.core
                 for (int columnInd = leftBound; columnInd < rightBound; columnInd++)
                 {
                     if (!boundaryInd.Equals(columnInd))
+                        //globalMatrix.setElement(boundaryInd, columnInd, neitralMatrix);
                         globalMatrix.setElement(boundaryInd, columnInd, neitralMatrix);
 
                 }
 
-                globalMatrix[boundaryInd, boundaryInd][0, 1] = 0;
+                /*globalMatrix[boundaryInd, boundaryInd][0, 1] = 0;
                 globalMatrix[boundaryInd, boundaryInd][0, 2] = 0;
                 globalMatrix[boundaryInd, boundaryInd][1, 2] = 0;
                 globalMatrix[boundaryInd, boundaryInd][1, 0] = 0;
                 globalMatrix[boundaryInd, boundaryInd][2, 0] = 0;
-                globalMatrix[boundaryInd, boundaryInd][2, 1] = 0;
+                globalMatrix[boundaryInd, boundaryInd][2, 1] = 0;*/
+
+                globalMatrix[3 * boundaryInd, 3 * boundaryInd + 1] = new DoubleContainerElement(0);
+                globalMatrix[3 * boundaryInd, 3 * boundaryInd + 2] = new DoubleContainerElement(0);
+                globalMatrix[3 * boundaryInd + 1, 3 * boundaryInd + 2] = new DoubleContainerElement(0);
+                globalMatrix[3 * boundaryInd + 1, 3 * boundaryInd] = new DoubleContainerElement(0);
+                globalMatrix[3 * boundaryInd + 2, 3 * boundaryInd] = new DoubleContainerElement(0);
+                globalMatrix[3 * boundaryInd + 2, 3 * boundaryInd + 1] = new DoubleContainerElement(0);
 
                 rightSide[boundaryInd] = defaultVector;
 
