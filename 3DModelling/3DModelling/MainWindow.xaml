@@ -1,0 +1,204 @@
+﻿<Window x:Class="_3DModelling.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_3DModelling"
+          xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
+        mc:Ignorable="d"
+        Title="Салфетка" Height="720" Width="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0"
+				HorizontalAlignment="Center" 
+				FontSize="25" 
+				Foreground="Purple" 
+				Content="Задача ''Салфетка''"
+            />
+        <StackPanel Grid.Row="1"  Height="Auto" VerticalAlignment="Top"  Margin="5,5,5,5" Orientation="Horizontal">
+            <StackPanel Width="Auto" HorizontalAlignment="Stretch" Margin="5 0 10 0">
+                <Label Content="Параметры сетки" FontSize="20" Foreground="Purple"/>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <Label Content="Hx = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Width="100px" Text="{Binding Hx}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="5 5 5 5">
+                                <Label Content="Hy = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Width="100px" Text="{Binding Hy}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <Label Content="Hz = " FontSize="15">
+                                    <Label.Foreground>
+                                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                    </Label.Foreground>
+                                </Label>
+                                <TextBox Width="100px" Text="{Binding Hz}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Label Content="Nx = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Width="100px" Text="{Binding Nx}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Label Content="Ny = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Width="100px" Text="{Binding Ny}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Label Content="Nz = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Width="100px" Text="{Binding Nz}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Right">
+                    <Button 
+                        Name="BuildGrid" 
+                        Margin="0,15,5,0" 
+                        Content="Перестроить сетку" 
+                        Click="RebuildGrid_Click" 
+                        FontSize="25" 
+                        Background="White" 
+                        Foreground="Purple" 
+                        BorderThickness="2" 
+                        BorderBrush="Purple" 
+                        Width="250px"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Width="Auto" Margin="5 0 10 0" HorizontalAlignment="Stretch">
+                <Label Content="Входные параметры" FontSize="20" Foreground="Purple"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Label Content="E = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Width="100px" Text="{Binding ElasticityModulus}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Label Content="ν = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Width="100px" Text="{Binding PoissonRatio}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Label Content="ρ = " FontSize="15">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                                </Label.Foreground>
+                            </Label>
+                            <TextBox Width="100px" Text="{Binding Density}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5" VerticalAlignment="Top">
+                        <Label Content="Число итераций:" FontSize="15">
+                            <Label.Foreground>
+                                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                            </Label.Foreground>
+                        </Label>
+                        <TextBox Width="100px" Text="{Binding Iterations}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel>
+                    <Button 
+                        x:Name="Execute" 
+                        Margin="0,15,5,0" 
+                        Content="Построить решение" 
+                        Click="Execute_Click" 
+                        FontSize="25" 
+                        Background="White" 
+                        Foreground="Purple" 
+                        BorderThickness="2" 
+                        BorderBrush="Purple" 
+                        HorizontalAlignment="Right" 
+                        Width="250px"
+                        IsEnabled="{Binding IsGridInitialized}"/>
+                </StackPanel>
+
+            </StackPanel>
+            <StackPanel Width="Auto" HorizontalAlignment="Stretch" Margin="5 0 10 0">
+                <Label Content="Режимы отображения сетки" FontSize="20" Foreground="Purple"/>
+                <CheckBox Content="Отображать узлы" FontSize="15" IsChecked="{Binding ShowNodes}">
+                    <CheckBox.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                    </CheckBox.Foreground>
+                </CheckBox>
+                <CheckBox Content="Отображать ребра" FontSize="15" IsChecked="{Binding ShowRibs}">
+                    <CheckBox.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                    </CheckBox.Foreground>
+                </CheckBox>
+                <CheckBox Content="Отображать скрытые элементы" FontSize="15" IsChecked="{Binding ShowHidden}">
+                    <CheckBox.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HotTrackColorKey}}"/>
+                    </CheckBox.Foreground>
+                </CheckBox>
+            </StackPanel>
+
+
+        </StackPanel>
+
+        <Slider 
+            Name ="StateSlider" 
+            Height="Auto"
+            Width="400"
+            Grid.Row="2" 
+            ValueChanged="StateSlider_ValueChanged" 
+            Margin="10,10,0,10" 
+            HorizontalAlignment="Left" 
+            TickPlacement="BottomRight" 
+            Foreground="Black" 
+            Maximum="{Binding IterationsCount}" 
+            Minimum="0" 
+            Value="0"
+            IsEnabled="{Binding IsSolutionBuilt}"/>
+        <HelixToolkit:HelixViewport3D x:Name="viewport"  DataContext="Child"  ZoomExtentsWhenLoaded="True" ShowCoordinateSystem="True"   InfiniteSpin="True" MouseDown="viewport_MouseDown" Grid.Row="3" Height="Auto" >
+            <!-- Using the SunLight. Strange thing is: If I use the DefaultLight my Performance gets really bad -->
+            <HelixToolkit:SunLight Brightness="1" >
+            </HelixToolkit:SunLight>
+            <!-- This ModelVisual3D Object should contain my LED cube -->
+            <ModelVisual3D x:Name="grid"/>
+            <ModelVisual3D x:Name="points"/>
+
+        </HelixToolkit:HelixViewport3D>
+
+
+
+
+
+    </Grid>
+</Window>
