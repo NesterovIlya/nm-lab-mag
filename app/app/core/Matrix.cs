@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace app.core
 {
@@ -17,7 +19,7 @@ namespace app.core
             get { return _columnsCount; }
             private set { }
         }
-
+       
         private double[,] _elements;
 
         public Matrix(int rowsCount, int columnsCount)
@@ -154,6 +156,47 @@ namespace app.core
                 }
             }
             return result;
+        }
+
+        //TODO удалить после тестирования
+        public IList<double> SumByRow()
+        {
+            IList<double> result = new List<double>();
+
+            for (int rowInd = 0; rowInd < RowsCount; rowInd++)
+            {
+                double sum = 0;
+                for (int colInd = 0; colInd < ColumnsCount; colInd++)
+                {
+                    sum += this[rowInd, colInd];
+                }
+                result.Add(sum);
+            }
+            return result;
+        }
+
+        public void printToFile(String path)
+        {
+            StreamWriter sw = null;
+            try
+            {
+                sw  = new StreamWriter(path);
+                for (int rowInd = 0; rowInd < RowsCount; rowInd++)
+                {
+                    String line = "";
+                    for (int colInd = 0; colInd < ColumnsCount; colInd++)
+                    {
+                        var prefix = _elements[rowInd, colInd] < 0 ? "" : " ";
+                        line += prefix + String.Format("{0:0.000}", _elements[rowInd, colInd]) + " ";
+                    }
+                    sw.WriteLine(line);
+                    sw.WriteLine();
+                }
+            } finally
+            {
+                sw.Close();
+            }
+
         }
 
     }

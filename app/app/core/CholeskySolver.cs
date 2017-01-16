@@ -11,10 +11,10 @@ namespace app.core
     {
         public CholeskySolver() { }
 
-        public IList<Vector3D> solve(SymmetricMatrix<MatrixDimension3> globalMatrix, IList<Vector3D> rightSide)
+        public IList<Vector3D> solve(SymmetricMatrix<DoubleContainerElement> globalMatrix, IList<Vector3D> rightSide)
         {
-            SymmetricMatrix<DoubleContainerElement> extarctGlobalMatrix = extractMatrix(globalMatrix);
-            
+            SymmetricMatrix<DoubleContainerElement> extarctGlobalMatrix = globalMatrix;//extractMatrix(globalMatrix);
+
             //Создание и заполнение матриц B и C
             SymmetricMatrix<DoubleContainerElement> BMatrix = new SymmetricMatrix<DoubleContainerElement>(extarctGlobalMatrix.Dimension, new DoubleContainerElement());
             SymmetricMatrix<DoubleContainerElement> CMatrix = new SymmetricMatrix<DoubleContainerElement>(extarctGlobalMatrix.Dimension, new DoubleContainerElement());

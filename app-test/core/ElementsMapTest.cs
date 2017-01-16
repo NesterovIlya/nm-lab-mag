@@ -25,11 +25,11 @@ namespace app_test.core
             int Nx = 1;
             int Ny = 1;
             int Nz = 1;
-            double elasticityModulus = 70;
-            double poissonRatio = 0.34;
-            double density = 1.0;
-            int iterationsCount = 10;
-            int[] boundaryConditions = { 0, 2, 4, 6 };
+            double elasticityModulus = 1;
+            double poissonRatio = 0.25;
+            double density = 1;
+            int iterationsCount = 1;
+            int[] boundaryConditions = { 0, 1, 2, 3 };
             InputData inputData = new InputData(hx, hy, hz, Nx, Ny, Nz, elasticityModulus, poissonRatio, density, iterationsCount, boundaryConditions);
 
             ElementsMap parsedElements = new ElementsMap(inputData);
@@ -56,21 +56,69 @@ namespace app_test.core
              * b_p = - (y_ji * z_ki - y_ki * z_ji);     c_p = x_ji * z_ki - x_ki * z_ji;    d_p = - (x_ji * y_ki - x_ki * y_ji);                 
              */
 
-            Element firstExpectedElement = new Element(
-                0,
-                0,
-                new Node(5, new Point3D(1, 0, 1), 0, -1, 1),
-                new Node(3, new Point3D(0, 1, 1), 1, 0, 0),
-                new Node(7, new Point3D(1, 1, 1), 1, 1, 0),
-                new Node(4, new Point3D(1, 0, 0), 0, 0, 1)
-            );
-            Element firstActualElement = parsedElements.elements[0];
+            Element[] expectedElements = {
+                new Element(
+                    0,
+                    0,
+                    new Node(5, new Point3D(1, 0, 1), 0, -1, 1),
+                    new Node(3, new Point3D(0, 1, 1), 1, 0, 0),
+                    new Node(7, new Point3D(1, 1, 1), 1, 1, 0),
+                    new Node(4, new Point3D(1, 0, 0), 0, 0, 1)
+                ),
+                new Element(
+                    1,
+                    0,
+                    new Node(2, new Point3D(0, 1, 0), -1, 0, 0),
+                    new Node(6, new Point3D(1, 1, 0), -1, -1, 1),
+                    new Node(7, new Point3D(1, 1, 1), 0, 0, 1),
+                    new Node(4, new Point3D(1, 0, 0), 0, 1, 0)
+                ),
+                new Element(
+                    2,
+                    0,
+                    new Node(2, new Point3D(0, 1, 0), 0, 1, -1),
+                    new Node(7, new Point3D(1, 1, 1), -1, -1, 0),
+                    new Node(3, new Point3D(0, 1, 1), -1, -1, 1),
+                    new Node(4, new Point3D(1, 0, 0), 0, 1, 0)
+                ),
+                new Element(
+                    3,
+                    0,
+                    new Node(1, new Point3D(0, 0, 1), -1, -1, 1),
+                    new Node(3, new Point3D(0, 1, 1), 0, -1, 0),
+                    new Node(5, new Point3D(1, 0, 1), 1, 0, 0),
+                    new Node(0, new Point3D(0, 0, 0), 0, 0, 1)
+                ),
+                new Element(
+                    4,
+                    0,
+                    new Node(4, new Point3D(1, 0, 0), 1, 1, -1),
+                    new Node(5, new Point3D(1, 0, 1), 0, 1, -1),
+                    new Node(3, new Point3D(0, 1, 1), 0, 1, 0),
+                    new Node(0, new Point3D(0, 0, 0), 1, 1, 0)
+                ),
+                new Element(
+                    5,
+                    0,
+                    new Node(4, new Point3D(1, 0, 0), 1, 0, 0),
+                    new Node(3, new Point3D(0, 1, 1), 0, 0, -1),
+                    new Node(2, new Point3D(0, 1, 0), 0, 1, -1),
+                    new Node(0, new Point3D(0, 0, 0), 1, 1, 0)
+                )
+            };
 
-            Assert.AreEqual(firstExpectedElement.id, firstActualElement.id);
-            Assert.AreEqual(firstExpectedElement.nodeI, firstActualElement.nodeI);
-            Assert.AreEqual(firstExpectedElement.nodeJ, firstActualElement.nodeJ);
-            Assert.AreEqual(firstExpectedElement.nodeK, firstActualElement.nodeK);
-            Assert.AreEqual(firstExpectedElement.nodeP, firstActualElement.nodeP);
+            var ind = 0;
+            foreach (Element actualElement in parsedElements.elements)
+            {
+                Assert.AreEqual(expectedElements[ind].id, actualElement.id, "Error while comparing id of " + ind + " element: ");
+                Assert.AreEqual(expectedElements[ind].nodeI, actualElement.nodeI, "Error while comparing node I of " + ind + " element: ");
+                Assert.AreEqual(expectedElements[ind].nodeJ, actualElement.nodeJ, "Error while comparing node J of " + ind + " element: ");
+                Assert.AreEqual(expectedElements[ind].nodeK, actualElement.nodeK, "Error while comparing node K of " + ind + " element: ");
+                Assert.AreEqual(expectedElements[ind].nodeP, actualElement.nodeP, "Error while comparing node P of " + ind + " element: ");
+                ind++;
+            }
+
+            
 
 
         }

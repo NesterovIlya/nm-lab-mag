@@ -23,8 +23,8 @@ namespace app.core
             // Весовой коэффициент (для итеративного процесса)
             double weightCoef = 0; 
 
-            // Накапливаемые перемещения узлов
-            IList<Vector3D> transitions = new List<Vector3D>();
+            // Последнее перемещения узлов
+            IList<Vector3D> lastTransition = new List<Vector3D>();
 
             // Формируем реестр элементов
             ElementsMap elementsRegistry = new ElementsMap(inputData);
@@ -35,13 +35,15 @@ namespace app.core
                 
                 // Генерируем правую часть
                 IList<Vector3D> rightSide = new List<Vector3D>();
+
                 foreach (double proportionCoef in elementsRegistry.nodeProportions)
                 {
                     rightSide.Add(new Vector3D(0, 0, -proportionCoef * weightCoef));
                 }
 
                 // Формируем обобщенную матрицу
-                SymmetricMatrix<MatrixDimension3> generalMatrix = _generalMatrixBuilder.build(elementsRegistry);
+                //SymmetricMatrix<MatrixDimension3> generalMatrix = _generalMatrixBuilder.build(elementsRegistry);
+                SymmetricMatrix<DoubleContainerElement> generalMatrix = _generalMatrixBuilder.build(elementsRegistry);
 
                 // Применяем граничные условия
                 applyBoundaryConditions(generalMatrix, rightSide, inputData.boundaryConditions);
@@ -49,16 +51,17 @@ namespace app.core
                 // Решаем систему
                 IList<Vector3D> solution = _choleskySolver.solve(generalMatrix, rightSide);
 
-                if (transitions.Count > 0)
+                // Считаем перемещение на текущей итерации и добавляем в результат
+                if (lastTransition.Count > 0)
                 {
-                    if (transitions.Count != solution.Count)
+                    if (lastTransition.Count != solution.Count)
                     {
-                        throw new ArgumentException("Size of transitions and solution list must be the same!");
+                        throw new ArgumentException("Size of lastTransition and solution list must be the same!");
                     }
                     List<Vector3D> buffer = new List<Vector3D>();
-                    for (int nodeIndex = 0; nodeIndex < transitions.Count; nodeIndex++)
+                    for (int nodeIndex = 0; nodeIndex < lastTransition.Count; nodeIndex++)
                     {
-                        buffer.Add(solution[nodeIndex] - transitions[nodeIndex]);
+                        buffer.Add(solution[nodeIndex] - lastTransition[nodeIndex]);
                     }
                     solutions.Add(buffer);
                 } else
@@ -66,7 +69,7 @@ namespace app.core
                     solutions.Add(solution);
                 }
 
-                transitions = solution;
+                lastTransition = solution;
 
             }
 
@@ -80,34 +83,46 @@ namespace app.core
          * rightSide - правая часть
          * boundaryConditions - массив номеров граничных узлов (нумерация начинается с 0!!!!!)
          */
-        private void applyBoundaryConditions(SymmetricMatrix<MatrixDimension3> globalMatrix, IList<Vector3D> rightSide, int[] boundaryConditions)
+        private void applyBoundaryConditions(SymmetricMatrix<DoubleContainerElement> globalMatrix, IList<Vector3D> rightSide, int[] boundaryConditions)
         {
             int dimension = globalMatrix.Dimension;
             int bandWidth = globalMatrix.getBandWidth();
             int boundaryCount = boundaryConditions.Length;
-            MatrixDimension3 neitralMatrix = new MatrixDimension3();
+            //MatrixDimension3 neitralMatrix = new MatrixDimension3();
+            DoubleContainerElement neitralMatrix = new DoubleContainerElement();
             Vector3D defaultVector = new Vector3D();
             
             for (int boundary = 0; boundary < boundaryCount; boundary++)
             {
-                int boundaryInd = boundaryConditions[boundary];
-                int leftBound = boundaryInd < globalMatrix.getBandWidth() ? 0 : boundaryInd - globalMatrix.getBandWidth() + 1;
-                int rightBound = boundaryInd + globalMatrix.getBandWidth() < globalMatrix.Dimension ? boundaryInd + globalMatrix.getBandWidth() : globalMatrix.Dimension;
+
+                for (int delta = 0; delta < 3; delta++)
+                {
+                    int boundaryInd = boundaryConditions[boundary] * 3 + delta;
+                    int leftBound = boundaryInd < globalMatrix.getBandWidth() ? 0 : boundaryInd - globalMatrix.getBandWidth() + 1;
+                    int rightBound = boundaryInd + globalMatrix.getBandWidth() < globalMatrix.Dimension ? boundaryInd + globalMatrix.getBandWidth() : globalMatrix.Dimension;
 
                     for (int columnInd = leftBound; columnInd < rightBound; columnInd++)
                     {
-                        if (!boundaryInd.Equals(columnInd))
+                        if (!(boundaryInd).Equals(columnInd))
+                        {
                             globalMatrix.setElement(boundaryInd, columnInd, neitralMatrix);
-
-                        globalMatrix[boundaryInd, boundaryInd][0, 1] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][0, 2] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][1, 2] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][1, 0] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][2, 0] = 0;
-                        globalMatrix[boundaryInd, boundaryInd][2, 1] = 0;
-
-                        rightSide[boundaryInd] = defaultVector;
+                        }
                     }
+
+                    /*globalMatrix[boundaryInd, boundaryInd][0, 1] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][0, 2] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][1, 2] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][1, 0] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][2, 0] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][2, 1] = 0;*/
+
+                    if (delta == 0)
+                    {
+                        rightSide[boundaryConditions[boundary]] = defaultVector;
+                    }
+
+                }
+
             }
             
         }

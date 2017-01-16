@@ -36,7 +36,6 @@ namespace app.core
 
             this.nodeProportions = new double[(input.Nx + 1) * (input.Ny + 1) * (input.Nz + 1)];
 
-            int sh = 0;
             for (int ix = 0; ix < input.Nx; ix++)
             {
                 for (int iy = 0; iy < input.Ny; iy++)
@@ -136,25 +135,23 @@ namespace app.core
                             * b_p = - (y_ji * z_ki - y_ki * z_ji);     c_p = x_ji * z_ki - x_ki * z_ji;    d_p = - (x_ji * y_ki - x_ki * y_ji);                 
                             */
                             elem.nodeI.coefB = - СalculateFormFunctionCoef(elem.nodeJ.point.Y, elem.nodeK.point.Y, elem.nodeP.point.Y, elem.nodeJ.point.Z, elem.nodeK.point.Z, elem.nodeP.point.Z);
-                            elem.nodeJ.coefB = - СalculateFormFunctionCoef(elem.nodeK.point.Y, elem.nodeP.point.Y, elem.nodeI.point.Y, elem.nodeK.point.Z, elem.nodeP.point.Z, elem.nodeI.point.Z);
+                            elem.nodeJ.coefB = СalculateFormFunctionCoef(elem.nodeK.point.Y, elem.nodeP.point.Y, elem.nodeI.point.Y, elem.nodeK.point.Z, elem.nodeP.point.Z, elem.nodeI.point.Z);
                             elem.nodeK.coefB = - СalculateFormFunctionCoef(elem.nodeP.point.Y, elem.nodeI.point.Y, elem.nodeJ.point.Y, elem.nodeP.point.Z, elem.nodeI.point.Z, elem.nodeJ.point.Z);
-                            elem.nodeP.coefB = - СalculateFormFunctionCoef(elem.nodeI.point.Y, elem.nodeJ.point.Y, elem.nodeK.point.Y, elem.nodeI.point.Z, elem.nodeJ.point.Z, elem.nodeK.point.Z);
+                            elem.nodeP.coefB = СalculateFormFunctionCoef(elem.nodeI.point.Y, elem.nodeJ.point.Y, elem.nodeK.point.Y, elem.nodeI.point.Z, elem.nodeJ.point.Z, elem.nodeK.point.Z);
 
                             elem.nodeI.coefC = СalculateFormFunctionCoef(elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeJ.point.Z, elem.nodeK.point.Z, elem.nodeP.point.Z);
-                            elem.nodeJ.coefC = СalculateFormFunctionCoef(elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeK.point.Z, elem.nodeP.point.Z, elem.nodeI.point.Z);
+                            elem.nodeJ.coefC = - СalculateFormFunctionCoef(elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeK.point.Z, elem.nodeP.point.Z, elem.nodeI.point.Z);
                             elem.nodeK.coefC = СalculateFormFunctionCoef(elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeP.point.Z, elem.nodeI.point.Z, elem.nodeJ.point.Z);
-                            elem.nodeP.coefC = СalculateFormFunctionCoef(elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeI.point.Z, elem.nodeJ.point.Z, elem.nodeK.point.Z);
+                            elem.nodeP.coefC = - СalculateFormFunctionCoef(elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeI.point.Z, elem.nodeJ.point.Z, elem.nodeK.point.Z);
 
                             elem.nodeI.coefD = - СalculateFormFunctionCoef(elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeJ.point.Y, elem.nodeK.point.Y, elem.nodeP.point.Y);
-                            elem.nodeJ.coefD = - СalculateFormFunctionCoef(elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeK.point.Y, elem.nodeP.point.Y, elem.nodeI.point.Y);
+                            elem.nodeJ.coefD = СalculateFormFunctionCoef(elem.nodeK.point.X, elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeK.point.Y, elem.nodeP.point.Y, elem.nodeI.point.Y);
                             elem.nodeK.coefD = - СalculateFormFunctionCoef(elem.nodeP.point.X, elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeP.point.Y, elem.nodeI.point.Y, elem.nodeJ.point.Y);
-                            elem.nodeP.coefD = - СalculateFormFunctionCoef(elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeI.point.Y, elem.nodeJ.point.Y, elem.nodeK.point.Y);
+                            elem.nodeP.coefD = СalculateFormFunctionCoef(elem.nodeI.point.X, elem.nodeJ.point.X, elem.nodeK.point.X, elem.nodeI.point.Y, elem.nodeJ.point.Y, elem.nodeK.point.Y);
 
                             elements.Add(elem);
 
                         }
-
-                        sh++;
                     }
                 }
 
@@ -173,24 +170,21 @@ namespace app.core
             {
                 this.nodeProportions[nodeNum] = currentCoef;
             }
-            else if (!this.nodeProportions[nodeNum].Equals(currentCoef))
+            /*else if (!this.nodeProportions[nodeNum].Equals(currentCoef))
             {
                 throw new ArithmeticException("Error occurred while filling proportion coefficient for node " + nodeNum + 
                     ". Existed coef " + this.nodeProportions[nodeNum] + " is not equal to computed " +  currentCoef + " for current element.");
+            }*/ else
+            {
+                this.nodeProportions[nodeNum] += currentCoef;
             }
         }
 
         private Node createNode(int pointIndex, Point3D[] points, int[] pointNumbers) 
         {
-            /*Vector3D transition = new Vector3D(0, 0, 0);
-            if (transitions != null && transitions.Count > 0)
-            {
-                transition = transitions[pointNumbers[pointIndex]];
-            }*/
-
             return new Node(
                 pointNumbers[pointIndex], 
-                new Point3D(points[pointIndex].X, points[pointIndex].Y, points[pointIndex].Z)// + transition
+                new Point3D(points[pointIndex].X, points[pointIndex].Y, points[pointIndex].Z)
             );
         }
     }

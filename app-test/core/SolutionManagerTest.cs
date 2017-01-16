@@ -377,11 +377,11 @@ namespace app_test.core
         public void Test_BuildSolution()
         {
             SolutionManager solutionManager = new SolutionManager();
-            int[] boundaryConditions = new int[4] { 0, 1, 6, 7 };
+            int[] boundaryConditions = new int[2] { 0, 2 };
             InputData inputData = new InputData(
-                2, 2, 2,
-                1, 2, 1,
-                100000, 0.44, 7800, //сталь
+                1, 1, 1,
+                1, 1, 1,
+                1, 0.25, 1,
                 1,
                 boundaryConditions
             );
@@ -390,7 +390,7 @@ namespace app_test.core
             Assert.AreEqual(1, solutions.Count);
             foreach (IList<Vector3D> solution in solutions)
             {
-                Assert.AreEqual(12, solution.Count);
+                Assert.AreEqual(8, solution.Count);
             }
         }
     }
