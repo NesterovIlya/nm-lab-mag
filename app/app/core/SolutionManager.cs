@@ -94,33 +94,34 @@ namespace app.core
             
             for (int boundary = 0; boundary < boundaryCount; boundary++)
             {
-                int boundaryInd = boundaryConditions[boundary];
-                int leftBound = boundaryInd < globalMatrix.getBandWidth() ? 0 : boundaryInd - globalMatrix.getBandWidth() + 1;
-                int rightBound = boundaryInd + globalMatrix.getBandWidth() < globalMatrix.Dimension ? boundaryInd + globalMatrix.getBandWidth() : globalMatrix.Dimension;
 
-                for (int columnInd = leftBound; columnInd < rightBound; columnInd++)
+                for (int delta = 0; delta < 3; delta++)
                 {
-                    if (!boundaryInd.Equals(columnInd))
-                        //globalMatrix.setElement(boundaryInd, columnInd, neitralMatrix);
-                        globalMatrix.setElement(boundaryInd, columnInd, neitralMatrix);
+                    int boundaryInd = boundaryConditions[boundary] * 3 + delta;
+                    int leftBound = boundaryInd < globalMatrix.getBandWidth() ? 0 : boundaryInd - globalMatrix.getBandWidth() + 1;
+                    int rightBound = boundaryInd + globalMatrix.getBandWidth() < globalMatrix.Dimension ? boundaryInd + globalMatrix.getBandWidth() : globalMatrix.Dimension;
+
+                    for (int columnInd = leftBound; columnInd < rightBound; columnInd++)
+                    {
+                        if (!(boundaryInd).Equals(columnInd))
+                        {
+                            globalMatrix.setElement(boundaryInd, columnInd, neitralMatrix);
+                        }
+                    }
+
+                    /*globalMatrix[boundaryInd, boundaryInd][0, 1] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][0, 2] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][1, 2] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][1, 0] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][2, 0] = 0;
+                    globalMatrix[boundaryInd, boundaryInd][2, 1] = 0;*/
+
+                    if (delta == 0)
+                    {
+                        rightSide[boundaryConditions[boundary]] = defaultVector;
+                    }
 
                 }
-
-                /*globalMatrix[boundaryInd, boundaryInd][0, 1] = 0;
-                globalMatrix[boundaryInd, boundaryInd][0, 2] = 0;
-                globalMatrix[boundaryInd, boundaryInd][1, 2] = 0;
-                globalMatrix[boundaryInd, boundaryInd][1, 0] = 0;
-                globalMatrix[boundaryInd, boundaryInd][2, 0] = 0;
-                globalMatrix[boundaryInd, boundaryInd][2, 1] = 0;*/
-
-                globalMatrix[3 * boundaryInd, 3 * boundaryInd + 1] = new DoubleContainerElement(0);
-                globalMatrix[3 * boundaryInd, 3 * boundaryInd + 2] = new DoubleContainerElement(0);
-                globalMatrix[3 * boundaryInd + 1, 3 * boundaryInd + 2] = new DoubleContainerElement(0);
-                globalMatrix[3 * boundaryInd + 1, 3 * boundaryInd] = new DoubleContainerElement(0);
-                globalMatrix[3 * boundaryInd + 2, 3 * boundaryInd] = new DoubleContainerElement(0);
-                globalMatrix[3 * boundaryInd + 2, 3 * boundaryInd + 1] = new DoubleContainerElement(0);
-
-                rightSide[boundaryInd] = defaultVector;
 
             }
             

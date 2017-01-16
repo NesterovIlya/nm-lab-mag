@@ -245,15 +245,15 @@ namespace _3DModelling
             Hz = 2;
 
             Nx = 1;
-            Ny = 1;
+            Ny = 5;
             Nz = 1;
 
 
             rebuildGrid();
 
-            ElasticityModulus = 1;
+            ElasticityModulus = 1000000;
             PoissonRatio = 0.25;
-            Density = 1;
+            Density = 1000;
 
             Iterations = 1;
             IterationsCount = 1;

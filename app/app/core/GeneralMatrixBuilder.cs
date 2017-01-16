@@ -37,19 +37,19 @@ namespace app.core
 
             matrixD = matrixD * (input.elasticityModulus * (1 - input.poissonRatio) / ((1 + input.poissonRatio) * (1 - 2 * input.poissonRatio)));
 
-            StreamWriter sw = new StreamWriter("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\log.txt");
-            sw.Close();
+            //StreamWriter sw = new StreamWriter("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\log.txt");
+            //sw.Close();
 
             foreach (var element in elementsMap.elements)
             {
                 createMatrKESegerlind(element, resultSegerlind, matrixD);
                 createMatrKE(element, result, matrixD);
             }
-            resultSegerlind.printToFile("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\GeneralMatrixSegerlind.txt");
-            var sum = resultSegerlind.SumByRow();
+            //resultSegerlind.printToFile("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\GeneralMatrixSegerlind.txt");
+            //var sum = resultSegerlind.SumByRow();
 
-            var tempRes = SymmetricMatrix<MatrixDimension3>.ToMatrix(result);
-            var sumByRowTempRes = tempRes.SumByRow();
+            //var tempRes = SymmetricMatrix<MatrixDimension3>.ToMatrix(result);
+            //var sumByRowTempRes = tempRes.SumByRow();
             return SymmetricMatrix<DoubleContainerElement>.fromMatrix(resultSegerlind);
         }
 
@@ -91,16 +91,16 @@ namespace app.core
                     matr[rNode.id, sNode.id] = matr[rNode.id, sNode.id] + buf; //(rNode.id > sNode.id ? (MatrixDimension3) buf.getTransposed() : buf);                   
                 }
             }
-            bigMatrix.printToFile("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\resBlock.txt");  
+            //bigMatrix.printToFile("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\resBlock.txt");  
         }
 
         private void createMatrKESegerlind(Element element, Matrix matr, Matrix matrixD)
         {
-            StreamWriter sw = new StreamWriter("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\log.txt", true);
+            //StreamWriter sw = new StreamWriter("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\log.txt", true);
             Matrix matrB = createMatrBSegerling(element);
             Matrix result = transpose(matrB) * matrixD * matrB * element.volume;
-            matrB.printToFile("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\matrB.txt");
-            result.printToFile("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\resSegerlindElement" + element.id + ".txt");
+            //matrB.printToFile("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\matrB.txt");
+            //result.printToFile("C:\\Data\\university\\master_1_year\\NM\\nm-lab-mag\\files\\resSegerlindElement" + element.id + ".txt");
 
             for (int r = 0; r < 4; r++)
             {
@@ -109,7 +109,7 @@ namespace app.core
                     Node rNode = getNodeByIndex(element, r);
                     Node sNode = getNodeByIndex(element, s);
 
-                    sw.WriteLine("Block [" + r + "," + s + "] of KE " + element.id + " will be added to the block [" + rNode.id + "," + sNode.id + "] of global matrix.");
+                    //sw.WriteLine("Block [" + r + "," + s + "] of KE " + element.id + " will be added to the block [" + rNode.id + "," + sNode.id + "] of global matrix.");
                     
                     for (int rowInd = 0; rowInd < 3; rowInd++)
                     {
@@ -122,7 +122,7 @@ namespace app.core
 
                 }
             }
-            sw.Close();
+            //sw.Close();
         }
 
         private Node getNodeByIndex(Element element, int index)
